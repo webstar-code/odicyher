@@ -34,3 +34,6 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+supply ring bg: bg-[radial-gradient(circle_at_50%_0%,rgba(82,160,255,0.18),transparent_34%),linear-gradient(180deg,rgba(9,16,36,0.96)_0%,rgba(5,10,24,0.92)_100%)] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_40px_rgba(20,60,140,0.16)]
