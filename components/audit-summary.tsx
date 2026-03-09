@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { AlertTriangle, Check, ChevronUp, Copy, Download, Shield, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -256,6 +257,95 @@ const statCardGradients: Record<StatKey, string> = {
 const darkPanelClassName =
   "rounded-[18px] border border-[#b8a078]/60 bg-[rgba(30,40,65,0.75)] shadow-[0_10px_40px_rgba(0,0,0,0.35)] backdrop-blur-sm";
 
+async function copyTextToClipboard(text: string) {
+  if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // Fall through to the legacy selection-based approach below.
+    }
+  }
+
+  if (typeof document === "undefined") {
+    return false;
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  textarea.style.pointerEvents = "none";
+  textarea.style.left = "-9999px";
+
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  textarea.setSelectionRange(0, text.length);
+
+  try {
+    return document.execCommand("copy");
+  } catch {
+    return false;
+  } finally {
+    document.body.removeChild(textarea);
+  }
+}
+
+function CopyIconButton({
+  text,
+  ariaLabel,
+  className,
+}: {
+  text: string;
+  ariaLabel: string;
+  className?: string;
+}) {
+  const [copied, setCopied] = useState(false);
+  const resetTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (resetTimeoutRef.current !== null) {
+        window.clearTimeout(resetTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleCopy = async () => {
+    const didCopy = await copyTextToClipboard(text);
+
+    if (!didCopy) {
+      return;
+    }
+
+    setCopied(true);
+
+    if (resetTimeoutRef.current !== null) {
+      window.clearTimeout(resetTimeoutRef.current);
+    }
+
+    resetTimeoutRef.current = window.setTimeout(() => {
+      setCopied(false);
+      resetTimeoutRef.current = null;
+    }, 1400);
+  };
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon-xs"
+      onClick={handleCopy}
+      className={cn(className, "hover:text-white")}
+      aria-label={ariaLabel}
+    >
+      {copied ? <Check className="size-3.5 text-[#9df3dd]" /> : <Copy className="size-3.5" />}
+    </Button>
+  );
+}
+
 function SectionHeading({ title }: { title: string }) {
   return (
     <div className="flex items-center justify-center gap-4 text-center">
@@ -358,7 +448,7 @@ function AcknowledgedPillBadge() {
 function FindingsTable() {
   return (
     <div className="rounded-[14px] border border-[#4a5a75]/50 bg-[#0A1329] px-3 py-2 backdrop-blur-sm">
-      <Table>
+      <Table className="overflow-scroll">
         <TableHeader>
           <TableRow className="border-[#4a5a75]/50 hover:bg-transparent">
             <TableHead className="h-8 px-2 text-[14px] font-medium text-white/90">
@@ -402,8 +492,8 @@ function FindingsBreakdown() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 px-4 pb-4 sm:px-5">
-        <div className="grid gap-4 lg:grid-cols-[320px_minmax(0,1fr)]">
-          <div className="w-full flex items-start gap-4 rounded-[14px] border border-[#4a5a75]/50 bg-[#0A1329] p-6 backdrop-blur-sm">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[320px_minmax(0,1fr)]">
+          <div className="min-w-0 w-full flex items-start gap-4 rounded-[14px] border border-[#4a5a75]/50 bg-[#0A1329] p-4 backdrop-blur-sm sm:p-6">
             <div className="w-full space-y-2.5">
               <p className="mb-3 text-base font-semibold text-white">Severity Distribution</p>
               {legendItems.map((item) => (
@@ -419,13 +509,13 @@ function FindingsBreakdown() {
             </div>
           </div>
 
-          <div className="rounded-[14px] border border-[#4a5a75]/50 bg-[#0A1329] p-6 backdrop-blur-sm">
+          <div className="min-w-0 rounded-[14px] border border-[#4a5a75]/50 bg-[#0A1329] p-4 backdrop-blur-sm sm:p-6">
             <p className="mb-3 text-base font-semibold text-white">Audit Findings</p>
             <div className="space-y-0">
               {issues.slice(0, 2).map((issue) => (
                 <div
                   key={issue.id}
-                  className="flex items-center justify-between border-b border-[#4a5a75]/40 hover:bg-[rgba(30,45,70,0.4)] px-0 py-1"
+                  className="flex items-start gap-2 border-b border-[#4a5a75]/40 px-0 py-2 hover:bg-[rgba(30,45,70,0.4)] flex-row sm:items-center justify-between"
                 >
                   <MinorPillBadge />
                   <AcknowledgedPillBadge />
@@ -442,26 +532,15 @@ function FindingsBreakdown() {
 }
 
 function DetailRow({ label, value }: { label: string; value: string }) {
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(value);
-    } catch { }
-  };
-
   return (
     <div className="grid grid-cols-[max-content_1fr_max-content] items-center gap-3 border-b border-[#4a5a75]/40 pb-2 last:border-b-0 last:pb-0">
       <span className="text-[14px] text-white/80">{label}:</span>
       <span className="truncate text-[15px] text-white">{value}</span>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon-xs"
-        onClick={handleCopy}
+      <CopyIconButton
+        text={value}
+        ariaLabel={`Copy ${label}`}
         className="h-7 w-7 rounded-[6px] bg-[rgba(90,100,120,0.5)] text-white hover:bg-[rgba(90,100,120,0.7)]"
-        aria-label={`Copy ${label}`}
-      >
-        <Copy className="size-3.5" />
-      </Button>
+      />
     </div>
   );
 }
@@ -870,12 +949,6 @@ function InfoPanelRow({
   value: string;
   actionLabel?: string;
 }) {
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(value);
-    } catch { }
-  };
-
   return (
     <div className="grid grid-cols-[minmax(0,1fr)_max-content] items-center gap-3 border-b border-[#33476e]/45 py-3 last:border-b-0 last:pb-0 first:pt-0">
       <div className="grid min-w-0 grid-cols-[minmax(110px,1fr)_minmax(0,1fr)] items-center gap-4 sm:grid-cols-[150px_minmax(0,1fr)]">
@@ -886,16 +959,11 @@ function InfoPanelRow({
       </div>
 
       {actionLabel ? (
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-xs"
-          onClick={handleCopy}
+        <CopyIconButton
+          text={value}
+          ariaLabel={actionLabel}
           className="h-8 w-8 rounded-[8px] border border-[#6776a7]/60 bg-[linear-gradient(180deg,rgba(48,57,92,0.92)_0%,rgba(34,42,74,0.92)_100%)] text-white/90 shadow-[0_1px_0_rgba(255,255,255,0.12)_inset] hover:bg-[linear-gradient(180deg,rgba(58,68,106,0.96)_0%,rgba(40,49,86,0.96)_100%)]"
-          aria-label={actionLabel}
-        >
-          <Copy className="size-3.5" />
-        </Button>
+        />
       ) : null}
     </div>
   );
@@ -1693,7 +1761,7 @@ export function AuditSummary() {
           ))}
         </section>
 
-        <section className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_364px]">
+        <section className="mt-4 flex flex-col gap-4 md:grid gap-4 lg:grid-cols-[minmax(0,1fr)_364px]">
           <FindingsBreakdown />
           <AuditDetailsCard />
         </section>
