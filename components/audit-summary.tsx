@@ -1,7 +1,20 @@
 "use client";
 
 import Image from "next/image";
-import { AlertTriangle, Check, ChevronUp, Copy, Download, Shield, X } from "lucide-react";
+import {
+  AlertTriangle,
+  CalendarDays,
+  Check,
+  ChevronUp,
+  Copy,
+  Download,
+  Globe,
+  Hexagon,
+  Link2,
+  Shield,
+  X,
+  Zap,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -236,6 +249,24 @@ const honeypotAndAntiWhale = {
     ],
     note: "An anti-whale mechanism is in place to limit the impact of large token holders on the trade zones.",
   },
+};
+
+const projectOverview = {
+  title: "Milestone HODL Token",
+  website: "dev-mht.github.io",
+  description:
+    "Milestone HODL Token (MHT) is a decentralized protocol on the BNB Smart Chain designed to transform market growth into automated rewards for holders.",
+  actions: [
+    { label: "Website", icon: Globe },
+    { label: "Twitter", icon: Link2 },
+  ],
+  badges: [
+    { label: "BNB Chain", icon: Hexagon, tone: "amber" as const },
+    { label: "Chainlink Automation", icon: Hexagon, tone: "indigo" as const },
+    { label: "Automated", icon: Zap, tone: "blue" as const },
+  ],
+  onboarded: "09 March 2026",
+  verifiedLabel: "Security Verified",
 };
 
 const SURFACE_NOISE_TEXTURE =
@@ -1701,6 +1732,132 @@ function HoneypotAndAntiWhaleSection() {
   );
 }
 
+function ProjectActionButton({
+  label,
+  icon: Icon,
+}: {
+  label: string;
+  icon: typeof Globe;
+}) {
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      className="h-11 rounded-[12px] border border-[#33476e]/55 bg-[linear-gradient(180deg,rgba(9,16,36,0.86)_0%,rgba(5,10,24,0.78)_100%)] px-4 text-[16px] font-medium text-white/88 shadow-[0_1px_0_rgba(255,255,255,0.08)_inset] hover:bg-[linear-gradient(180deg,rgba(14,22,46,0.9)_0%,rgba(8,14,30,0.84)_100%)]"
+    >
+      <Icon className="mr-2 size-4.5 text-[#74c6ff]" />
+      {label}
+    </Button>
+  );
+}
+
+function ProjectFeatureBadge({
+  label,
+  icon: Icon,
+  tone,
+}: {
+  label: string;
+  icon: typeof Hexagon;
+  tone: "amber" | "indigo" | "blue";
+}) {
+  const toneMap = {
+    amber: "text-[#f0b45b]",
+    indigo: "text-[#7e8dff]",
+    blue: "text-[#53b9ff]",
+  };
+
+  return (
+    <div className="inline-flex items-center gap-2 rounded-[12px] border border-[#33476e]/50 bg-[linear-gradient(180deg,rgba(9,16,36,0.82)_0%,rgba(5,10,24,0.72)_100%)] px-4 py-3 text-[15px] font-medium text-white/88">
+      <Icon className={cn("size-4.5 shrink-0", toneMap[tone])} />
+      <span>{label}</span>
+    </div>
+  );
+}
+
+function ProjectOverviewSection() {
+  return (
+    <Card className={cn("relative overflow-hidden bg-[#050d1e] py-0 border-[#33476e]/80 gap-0")}>
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[220px] bg-[radial-gradient(ellipse_70%_80%_at_22%_20%,rgba(58,140,255,0.18),transparent_60%),radial-gradient(ellipse_70%_80%_at_75%_10%,rgba(134,156,255,0.12),transparent_55%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(121,161,255,0.22)_1px,transparent_1px),linear-gradient(90deg,rgba(121,161,255,0.22)_1px,transparent_1px)] bg-size-[32px_32px] opacity-[0.09]" />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.08] mix-blend-screen"
+        style={{
+          backgroundImage: `url("${SURFACE_NOISE_TEXTURE}")`,
+          backgroundSize: "180px 180px",
+        }}
+      />
+
+      <CardContent className="relative px-4 py-5 sm:px-5">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1.65fr)_280px] lg:items-stretch">
+          <div className="rounded-[18px] border border-[#33476e]/55 bg-[linear-gradient(180deg,rgba(7,13,29,0.45)_0%,rgba(7,13,29,0.22)_100%)] p-5">
+            <h2 className="text-[28px] font-semibold tracking-[-0.04em] text-white sm:text-[32px]">
+              {projectOverview.title}
+            </h2>
+
+            <div className="mt-3 inline-flex items-center gap-2 text-[16px] text-white/72">
+              <Globe className="size-4.5 text-[#74c6ff]" />
+              <span>{projectOverview.website}</span>
+            </div>
+
+            <div className="mt-5 flex flex-wrap gap-3">
+              {projectOverview.actions.map((action) => (
+                <ProjectActionButton key={action.label} {...action} />
+              ))}
+            </div>
+
+            <p className="mt-7 max-w-3xl text-[18px] leading-9 text-white/82 sm:text-[19px]">
+              {projectOverview.description}
+            </p>
+
+            <div className="mt-7 flex flex-wrap gap-3">
+              {projectOverview.badges.map((badge) => (
+                <ProjectFeatureBadge key={badge.label} {...badge} />
+              ))}
+            </div>
+
+            <div className="mt-6 flex items-center gap-3 text-[16px] text-white/70">
+              <CalendarDays className="size-4.5 text-white/55" />
+              <span>
+                Onboarded: <span className="text-white/88">{projectOverview.onboarded}</span>
+              </span>
+            </div>
+          </div>
+
+          <div className="rounded-[18px] border border-[#33476e]/55 bg-[linear-gradient(180deg,rgba(7,13,29,0.45)_0%,rgba(7,13,29,0.22)_100%)] p-5">
+            <div className="flex h-full flex-col items-center justify-center text-center">
+              <Image
+                src="/images/logo.svg"
+                alt="Odicyber"
+                width={220}
+                height={220}
+                className="h-auto w-[180px] filter-[drop-shadow(0_0_30px_rgba(80,150,255,0.35))] sm:w-[220px]"
+              />
+
+              <div className="mt-4 text-[34px] font-semibold tracking-[-0.05em] text-[#7fc7ff] sm:text-[40px]">
+                ODICYBER
+              </div>
+
+              <div className="mt-6 inline-flex items-center gap-3 rounded-[14px] border border-[#3b5fa0]/60 bg-[linear-gradient(180deg,rgba(14,30,64,0.95)_0%,rgba(8,18,40,0.92)_100%)] px-5 py-3 text-left shadow-[0_0_24px_rgba(62,138,255,0.18),0_1px_0_rgba(255,255,255,0.08)_inset]">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[radial-gradient(circle_at_50%_20%,rgba(98,178,255,0.25),rgba(12,22,48,0.92)_72%)] text-[#8ec9ff]">
+                  <Shield className="size-5" />
+                </div>
+                <div>
+                  <div className="text-[15px] font-semibold text-white/92">
+                    {projectOverview.verifiedLabel}
+                  </div>
+                  <div className="text-[12px] tracking-[0.18em] text-[#6fc2ff] uppercase">
+                    ODICYBER
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export function AuditSummary() {
   return (
     <main className="max-w-6xl mx-auto relative isolate min-h-screen overflow-hidden bg-[linear-gradient(180deg,#0a1525_0%,#0d1b2e_30%,#0a1525_100%)]">
@@ -1761,7 +1918,7 @@ export function AuditSummary() {
           ))}
         </section>
 
-        <section className="mt-4 flex flex-col gap-4 md:grid gap-4 lg:grid-cols-[minmax(0,1fr)_364px]">
+        <section className="mt-4 flex flex-col gap-4 md:grid lg:grid-cols-[minmax(0,1fr)_364px]">
           <FindingsBreakdown />
           <AuditDetailsCard />
         </section>
@@ -1796,6 +1953,10 @@ export function AuditSummary() {
 
         <section className="mt-4">
           <HoneypotAndAntiWhaleSection />
+        </section>
+
+        <section className="mt-4">
+          <ProjectOverviewSection />
         </section>
       </div>
     </main>
