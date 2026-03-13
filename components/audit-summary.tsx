@@ -15,7 +15,8 @@ import {
   X,
   Zap,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import type { ComponentType } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -29,8 +30,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-
-type StatKey = "total" | "critical" | "medium" | "minor" | "resolved";
+import type { AuditReport, StatKey } from "@/types/audit-report";
+import { defaultAuditReport } from "@/lib/default-audit-report";
 
 const STATUS_COLORS: Record<StatKey, string> = {
   total: "#2D3A53",
@@ -38,235 +39,6 @@ const STATUS_COLORS: Record<StatKey, string> = {
   medium: "#e5a54b",
   minor: "#3d8fe8",
   resolved: "#1da564",
-};
-
-const summaryCards = [
-  { label: "Total Findings", value: 3, icon: "findings", tone: "total" as StatKey },
-  { label: "Critical", value: 0, icon: "critical", tone: "critical" as StatKey },
-  { label: "Medium", value: 0, icon: "medium", tone: "medium" as StatKey },
-  { label: "Minor", value: 3, icon: "minor", tone: "minor" as StatKey },
-  { label: "Resolved", value: 0, icon: "resolved", tone: "resolved" as StatKey },
-];
-
-const legendItems = [
-  { label: "Critical", count: 0, tone: "critical" as StatKey },
-  { label: "Medium", count: 0, tone: "medium" as StatKey },
-  { label: "Minor", count: 3, tone: "minor" as StatKey },
-];
-
-const issues = [
-  { id: "NWES", title: "ERC-20 Standard Noncompliance", severity: "Minor" },
-  { id: "MC", title: "Missing Validation Check", severity: "Minor" },
-  { id: "L19", title: "Compiler Version Not Pinned", severity: "Minor" },
-];
-
-const detailRows = [
-  { label: "Network", value: "Binance Smart Chain" },
-  { label: "Contract", value: "0x315e...c2bf" },
-  { label: "File Audited", value: "LFUSDcoin.sol" },
-  { label: "SHA256", value: "d0955f...fc8eb" },
-  { label: "Audit Date", value: "March 2026" },
-];
-
-const burnedAmountMetrics = {
-  totalSupplyBurned: "0.1%",
-  totalSupplyBurnedLabel: "of Total Supply",
-  tokens: [
-    { label: "Tokens", value: "49.4B", suffix: "(100% supply)", color: "#8b98ff" },
-    { label: "Burned Tokens", value: "0", suffix: "(0% supply)", color: "#cab7ff" },
-  ],
-  liquidity: [
-    { label: "Tokens", value: "5", suffix: "(0% supply)", color: "#efc18f" },
-    { label: "Tokens Burned", value: "0", suffix: "(0% supply)", color: "#f5f0dc" },
-  ],
-  circulating: {
-    value: "49.4B",
-    suffix: "(99.9% supply)",
-    note: "Burned 0",
-    noteSuffix: "(0.1% supply)",
-  },
-};
-
-const lockersMetrics = {
-  totalTokensLocked: "20.2%",
-  totalTokensLockedLabel: "of Circ. Supply",
-  tokens: [
-    { label: "Tokens", value: "49.4B", suffix: "(100% supply)", color: "#8b98ff" },
-    { label: "Locked Tokens", value: "10B", suffix: "(20.2% supply)", color: "#57a9ff" },
-  ],
-  liquidity: [
-    { label: "Tokens", value: "5", suffix: "(0% supply)", color: "#efc18f" },
-    { label: "Locked Tokens", value: "0", suffix: "(0% supply)", color: "#f5f0dc" },
-  ],
-};
-
-const contractSecurityMetrics = {
-  score: 92,
-  maxScore: 100,
-  summary:
-    "Overall smart contract safety score based on static analysis and manual review.",
-  checks: [
-    { label: "Reentrancy Protection", status: "Safe", tone: "safe" as const },
-    { label: "Ownership Control", status: "Secure", tone: "safe" as const },
-    { label: "Overflow Protection", status: "Safe", tone: "safe" as const },
-    { label: "Proxy Pattern Safety", status: "Review", tone: "review" as const },
-    { label: "Upgrade Authorization", status: "Missing", tone: "missing" as const },
-    { label: "Emergency Pause", status: "Missing", tone: "missing" as const },
-  ],
-};
-
-const contractInformation = {
-  tokenDetails: [
-    { label: "Token Name", value: "LFUSD Coin" },
-    { label: "Symbol", value: "LFUSD" },
-    { label: "Standard", value: "ERC-20" },
-    { label: "Decimals", value: "50,000,000,000" },
-    { label: "Total Supply", value: "50,000,000,000" },
-  ],
-  deploymentDetails: [
-    { label: "Deployer Address", value: "0x52a...91a", actionLabel: "Copy deployer address" },
-    { label: "Contract Creator", value: "EOA", actionLabel: "Copy contract creator" },
-    { label: "Verified Source", value: "Yes", actionLabel: "Copy verified source" },
-    { label: "Compiler Version", value: "0.8.19", actionLabel: "Copy compiler version" },
-    { label: "Optimization", value: "Enabled", actionLabel: "Copy optimization status" },
-  ],
-};
-
-const ownershipAndLiquidityRisk = {
-  ownerControl: {
-    value: "54.8%",
-    subtitle: "Owner Control",
-    progress: 54.8,
-    holders: [
-      { label: "Deploying Wallet", value: "8.00B", suffix: "(16.0%)", color: "#6eb8ff" },
-      { label: "Staking Contract", value: "6.00B", suffix: "(12.0%)", color: "#f2b34d" },
-      { label: "Exchange Wallets", value: "5.21B", suffix: "(10.0%)", color: "#f0a793" },
-      { label: "Multi-Sig Wallet", value: "4.51B", suffix: "(9.0%)", color: "#a4c8ff" },
-    ],
-    warning:
-      "Liquidity is not locked and could be withdrawn at any time, posing a significant risk of funds being pulled out from the pool.",
-  },
-  liquidityHolder: {
-    title: "Top Liquidity Holder",
-    holder: "OTWS....fFGD",
-    chipPrimary: "862.3B",
-    chipSecondary: "CTH",
-    footerLabel: "92.4% of Total Liquidity",
-    footerValue: "92.4%",
-    progress: 92.4,
-  },
-  lockedLiquidity: {
-    title: "Locked Liquidity",
-    leftValue: "0.ETH",
-    rightValue: "0-ETH",
-    subLabel: "0.0% al Liquidity Supply",
-    rightPercent: "0.0%",
-  },
-};
-
-const holderDistributionAnalysis = {
-  score: {
-    value: "54.8%",
-    subtitle: "Security Rating",
-    progress: 54.8,
-  },
-  whaleCategory: {
-    title: "Whales",
-    value: "54.8%",
-    progress: 54.8,
-    rows: [
-      { label: "Whales", value: "27.39B", color: "#67d8ff", active: true },
-      { label: "Large Holders", value: "13.1B", color: "#5a9bff" },
-      { label: "Small Holders", value: "9.50B", color: "#61b6ff" },
-    ],
-  },
-  liquidityRisk: {
-    score: "92.4%",
-    subtitle: "Total Holders",
-    progress: 92.4,
-    holder: "OTW3...FF69",
-    primaryValue: "462.38 ETH",
-    secondaryValue: "5560 ETH",
-    bottomShare: "5.4%",
-    bottomAmount: "96018 ETH",
-  },
-  note:
-    "The current tax is within a reasonable range, it is recommended to monitor any changes to tax.",
-};
-
-const transactionTaxAnalysis = {
-  taxes: [
-    { label: "Buy Tax", value: "1%", progress: 22, fillClassName: "bg-[linear-gradient(90deg,#39e3ff_0%,#2a9fc8_100%)] shadow-[0_0_18px_rgba(57,227,255,0.35)]" },
-    { label: "Sell Tax", value: "1.5%", progress: 48, fillClassName: "bg-[linear-gradient(90deg,#56c8ff_0%,#5d86ff_100%)] shadow-[0_0_18px_rgba(86,200,255,0.32)]" },
-    { label: "Transfer Tax", value: "9.0%", progress: 67, fillClassName: "bg-[linear-gradient(90deg,#214f9f_0%,#2c67ba_100%)] shadow-[0_0_18px_rgba(55,120,220,0.24)]" },
-  ],
-  breakdownRows: [
-    { tax: "Tax", taxValue: "1%", buyLabel: "Buyer Development", buyValue: "0.5%", sellLabel: "Buyer Marketing", sellValue: "0.5%" },
-    { tax: "Tax", taxValue: "1.5%", buyLabel: "Buyer Development", buyValue: "0.5%", sellLabel: "Fee Liquidity Pool", sellValue: "0.5%" },
-  ],
-  note:
-    "The current tax is within a reasonable range. It is recommended to monitor any changes to tax parameters.",
-  liquidityRisk: {
-    title: "Liquidity Risk",
-    topHolderTitle: "Top Liquidity Holder",
-    holder: "OTW3...FF89",
-    chipValue: "462.38 ETH",
-    footerLabel: "92.0% of Total Liquidity",
-    footerValue: "92.4%",
-    progress: 92.4,
-    lockedTitle: "Locked Liquidity",
-    lockedLeftValue: "0 ETH",
-    lockedRightValue: "0 ETH",
-    lockedSubLabel: "0.0% of Liquidity Supply",
-    lockedPercent: "0.0%",
-  },
-};
-
-const honeypotAndAntiWhale = {
-  honeypot: {
-    status: "No Honeypot Detected",
-    checks: [
-      "Sell Function Usable",
-      "No External Fund Lock",
-      "No Suspicious Code Detected",
-    ],
-    note: "This contract does not exhibit any honeypot characteristics.",
-  },
-  antiWhale: {
-    ringValue: "500M",
-    ringSubtitle: "Tokens",
-    progress: 92.4,
-    title: "500M Tokens",
-    subLabel: "Control",
-    footerLeft: "2.0% Tokens",
-    footerRight: "92.4%",
-    baseValue: "500 ETH",
-    baseSubLabel: "0.3 Total Liquidity",
-    statRows: [
-      { label: "Transfer Limit", value: "2.0%", status: "Enabled" },
-      { label: "Max Wallet Limit", value: "2.0%", status: "Enabled" },
-      { label: "Max Transaction Limit", value: "500M", status: "Enabled" },
-    ],
-    note: "An anti-whale mechanism is in place to limit the impact of large token holders on the trade zones.",
-  },
-};
-
-const projectOverview = {
-  title: "Milestone HODL Token",
-  website: "dev-mht.github.io",
-  description:
-    "Milestone HODL Token (MHT) is a decentralized protocol on the BNB Smart Chain designed to transform market growth into automated rewards for holders.",
-  actions: [
-    { label: "Website", icon: Globe },
-    { label: "Twitter", icon: Link2 },
-  ],
-  badges: [
-    { label: "BNB Chain", icon: Hexagon, tone: "amber" as const },
-    { label: "Chainlink Automation", icon: Hexagon, tone: "indigo" as const },
-    { label: "Automated", icon: Zap, tone: "blue" as const },
-  ],
-  onboarded: "09 March 2026",
-  verifiedLabel: "Security Verified",
 };
 
 const SURFACE_NOISE_TEXTURE =
@@ -287,6 +59,168 @@ const statCardGradients: Record<StatKey, string> = {
 
 const darkPanelClassName =
   "rounded-[18px] border border-[#b8a078]/60 bg-[rgba(30,40,65,0.75)] shadow-[0_10px_40px_rgba(0,0,0,0.35)] backdrop-blur-sm";
+
+type MetricItem = AuditReport["burnedAmountMetrics"]["tokens"][number];
+
+const COMPACT_NUMBER_MULTIPLIERS: Record<string, number> = {
+  K: 1_000,
+  M: 1_000_000,
+  B: 1_000_000_000,
+  T: 1_000_000_000_000,
+};
+
+function clampPercentage(value: number) {
+  return Math.max(0, Math.min(100, value));
+}
+
+function parsePercentage(value?: string | null) {
+  if (!value) {
+    return null;
+  }
+
+  const match = value.match(/-?\d+(?:\.\d+)?(?=\s*%)/);
+  if (!match) {
+    return null;
+  }
+
+  return clampPercentage(Number.parseFloat(match[0]));
+}
+
+function parseCompactNumber(value?: string | null) {
+  if (!value) {
+    return null;
+  }
+
+  const normalized = value.trim().replaceAll(",", "");
+  const match = normalized.match(/^(-?\d+(?:\.\d+)?)\s*([KMBT])?$/i);
+  if (!match) {
+    return null;
+  }
+
+  const amount = Number.parseFloat(match[1]);
+  const unit = match[2]?.toUpperCase();
+
+  return Number.isFinite(amount) ? amount * (unit ? COMPACT_NUMBER_MULTIPLIERS[unit] : 1) : null;
+}
+
+function formatPercentage(value: number) {
+  return `${Number(value.toFixed(value < 1 ? 2 : 1)).toString()}%`;
+}
+
+function buildRingBackground(progress: number) {
+  const safeProgress = clampPercentage(progress);
+  const progressDegrees = safeProgress * 3.6;
+
+  return `conic-gradient(from 220deg, rgba(117,204,255,1) 0deg, rgba(112,141,255,1) ${progressDegrees}deg, rgba(33,48,84,0.78) ${progressDegrees}deg, rgba(14,22,41,0.94) 360deg)`;
+}
+
+function resolvePercentageFromSources(
+  textSources: Array<string | null | undefined>,
+  numericFallback?: number
+) {
+  for (const textSource of textSources) {
+    const parsedValue = parsePercentage(textSource);
+    if (parsedValue !== null) {
+      return parsedValue;
+    }
+  }
+
+  return clampPercentage(numericFallback ?? 0);
+}
+
+function resolveTotalSupplyAmount(data: AuditReport) {
+  const tokenSupplyRow = data.contractInformation.tokenDetails.find((row) =>
+    row.label.toLowerCase().includes("total supply")
+  );
+
+  return (
+    parseCompactNumber(tokenSupplyRow?.value) ??
+    parseCompactNumber(data.burnedAmountMetrics.tokens[0]?.value) ??
+    parseCompactNumber(data.lockersMetrics.tokens[0]?.value) ??
+    null
+  );
+}
+
+function resolveItemSharePercentage(itemValue: string, totalValue: number | null) {
+  const itemAmount = parseCompactNumber(itemValue);
+
+  if (itemAmount !== null && totalValue !== null && totalValue > 0) {
+    return clampPercentage((itemAmount / totalValue) * 100);
+  }
+
+  return null;
+}
+
+function sumHolderPercentages(
+  holders: AuditReport["ownershipAndLiquidityRisk"]["ownerControl"]["holders"],
+  totalSupplyAmount: number | null
+) {
+  let totalPercentage = 0;
+  let foundPercentage = false;
+
+  for (const holder of holders) {
+    const holderPercentage =
+      parsePercentage(holder.suffix) ?? resolveItemSharePercentage(holder.value, totalSupplyAmount);
+
+    if (holderPercentage !== null) {
+      totalPercentage += holderPercentage;
+      foundPercentage = true;
+    }
+  }
+
+  return foundPercentage ? clampPercentage(totalPercentage) : null;
+}
+
+function resolveActiveSharePercentage(
+  rows: AuditReport["holderDistributionAnalysis"]["whaleCategory"]["rows"]
+) {
+  const activeRow = rows.find((row) => row.active) ?? rows[0];
+  const totalValue = rows.reduce((sum, row) => sum + (parseCompactNumber(row.value) ?? 0), 0);
+  const activeValue = parseCompactNumber(activeRow?.value);
+
+  if (activeRow && activeValue !== null && totalValue > 0) {
+    return clampPercentage((activeValue / totalValue) * 100);
+  }
+
+  return null;
+}
+
+function resolveMetricPercentage({
+  items,
+  keywords,
+  fallbackText,
+}: {
+  items: MetricItem[];
+  keywords: string[];
+  fallbackText?: string;
+}) {
+  const highlightedItem =
+    items.find((item) =>
+      keywords.some((keyword) => item.label.toLowerCase().includes(keyword))
+    ) ?? items[1];
+
+  const explicitPercentage =
+    parsePercentage(highlightedItem?.suffix) ?? parsePercentage(highlightedItem?.value);
+
+  if (explicitPercentage !== null) {
+    return explicitPercentage;
+  }
+
+  const totalValue = parseCompactNumber(items[0]?.value);
+  const highlightedValue = parseCompactNumber(highlightedItem?.value);
+
+  if (
+    totalValue !== null &&
+    highlightedValue !== null &&
+    Number.isFinite(totalValue) &&
+    Number.isFinite(highlightedValue) &&
+    totalValue > 0
+  ) {
+    return clampPercentage((highlightedValue / totalValue) * 100);
+  }
+
+  return parsePercentage(fallbackText) ?? 0;
+}
 
 async function copyTextToClipboard(text: string) {
   if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
@@ -476,7 +410,7 @@ function AcknowledgedPillBadge() {
   );
 }
 
-function FindingsTable() {
+function FindingsTable({ issues }: { issues: AuditReport["issues"] }) {
   return (
     <div className="rounded-[14px] border border-[#4a5a75]/50 bg-[#0A1329] px-3 py-2 backdrop-blur-sm">
       <Table className="overflow-scroll">
@@ -512,7 +446,7 @@ function FindingsTable() {
   );
 }
 
-function FindingsBreakdown() {
+function FindingsBreakdown({ data }: { data: AuditReport }) {
   return (
     <Card className={cn("bg-[#0A1329]", "py-0 relative border-[#4a5a75]/70")}>
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[280px] bg-[radial-gradient(ellipse_100%_80%_at_80%_20%,rgba(80,150,255,0.15),transparent_60%)]" />
@@ -527,7 +461,7 @@ function FindingsBreakdown() {
           <div className="min-w-0 w-full flex items-start gap-4 rounded-[14px] border border-[#4a5a75]/50 bg-[#0A1329] p-4 backdrop-blur-sm sm:p-6">
             <div className="w-full space-y-2.5">
               <p className="mb-3 text-base font-semibold text-white">Severity Distribution</p>
-              {legendItems.map((item) => (
+              {data.legendItems.map((item) => (
                 <div key={item.label} className="w-full flex items-center gap-2 text-[15px] text-white">
                   <span
                     className="h-2.5 w-2.5 rounded-full shrink-0"
@@ -543,7 +477,7 @@ function FindingsBreakdown() {
           <div className="min-w-0 rounded-[14px] border border-[#4a5a75]/50 bg-[#0A1329] p-4 backdrop-blur-sm sm:p-6">
             <p className="mb-3 text-base font-semibold text-white">Audit Findings</p>
             <div className="space-y-0">
-              {issues.slice(0, 2).map((issue) => (
+              {data.issues.slice(0, 2).map((issue) => (
                 <div
                   key={issue.id}
                   className="flex items-start gap-2 border-b border-[#4a5a75]/40 px-0 py-2 hover:bg-[rgba(30,45,70,0.4)] flex-row sm:items-center justify-between"
@@ -556,7 +490,7 @@ function FindingsBreakdown() {
           </div>
         </div>
 
-        <FindingsTable />
+        <FindingsTable issues={data.issues} />
       </CardContent>
     </Card>
   );
@@ -576,7 +510,7 @@ function DetailRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-function AuditDetailsCard() {
+function AuditDetailsCard({ data }: { data: AuditReport }) {
   return (
     <Card className={cn("bg-[#0A1329]", "py-0 border-[#4a5a75]/70")}>
       <CardHeader className="px-4 pt-4 pb-3 sm:px-5">
@@ -586,7 +520,7 @@ function AuditDetailsCard() {
       </CardHeader>
       <CardContent className="space-y-4 px-4 pb-4 sm:px-5">
         <div className="space-y-3 rounded-[14px] border border-[#4a5a75]/50 bg-[rgba(25,35,55,0.5)] p-3 backdrop-blur-sm">
-          {detailRows.map((row) => (
+          {data.detailRows.map((row) => (
             <DetailRow key={row.label} label={row.label} value={row.value} />
           ))}
         </div>
@@ -691,7 +625,7 @@ function SupplyRing({
         <div
           className="absolute inset-0 rounded-full"
           style={{
-            background: `conic-gradient(from 220deg, rgba(117,204,255,1) 0deg, rgba(112,141,255,1) ${progress * 3.6}deg, rgba(210,223,255,0.95) ${progress * 3.6}deg, rgba(210,223,255,0.95) 360deg)`,
+            background: buildRingBackground(progress),
             boxShadow:
               "0 0 30px rgba(96,183,255,0.28), inset 0 0 30px rgba(96,183,255,0.22)",
           }}
@@ -710,30 +644,55 @@ function SupplyRing({
   );
 }
 
-function CirculatingSupplyBlock() {
+function CirculatingSupplyBlock({
+  circulating,
+  progressValue,
+}: {
+  circulating: AuditReport["burnedAmountMetrics"]["circulating"];
+  progressValue: number;
+}) {
   return (
     <div className="rounded-[18px] border border-[#33476e]/60 bg-[linear-gradient(180deg,rgba(9,16,36,0.96)_0%,rgba(5,10,24,0.92)_100%)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_32px_rgba(20,60,140,0.12)]">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h4 className="text-[15px] font-semibold text-white sm:text-[16px]">Circulating Supply</h4>
         <p className="text-[14px] font-semibold text-[#b7c7ff] sm:text-[15px]">
-          {burnedAmountMetrics.circulating.value}{" "}
-          <span className="font-normal text-white/70">{burnedAmountMetrics.circulating.suffix}</span>
+          {circulating.value}{" "}
+          <span className="font-normal text-white/70">{circulating.suffix}</span>
         </p>
       </div>
 
       <div className="mt-4">
-        <GlowingProgress value={99.9} />
+        <GlowingProgress value={progressValue} />
       </div>
 
       <p className="mt-3 text-[14px] text-white/85">
-        {burnedAmountMetrics.circulating.note}{" "}
-        <span className="text-white/70">{burnedAmountMetrics.circulating.noteSuffix}</span>
+        {circulating.note}{" "}
+        <span className="text-white/70">{circulating.noteSuffix}</span>
       </p>
     </div>
   );
 }
 
-function BurnedAmountSection() {
+function BurnedAmountSection({ data }: { data: AuditReport }) {
+  const m = data.burnedAmountMetrics;
+  const totalSupplyBurnedPercentage =
+    parsePercentage(m.totalSupplyBurned) ??
+    resolveMetricPercentage({
+      items: m.tokens,
+      keywords: ["burned"],
+    });
+  const burnedTokenPercentage = resolveMetricPercentage({
+    items: m.tokens,
+    keywords: ["burned"],
+    fallbackText: m.totalSupplyBurned,
+  });
+  const burnedLiquidityPercentage = resolveMetricPercentage({
+    items: m.liquidity,
+    keywords: ["burned"],
+  });
+  const circulatingPercentage =
+    parsePercentage(m.circulating.suffix) ?? clampPercentage(100 - totalSupplyBurnedPercentage);
+
   return (
     <Card className={cn("relative overflow-hidden bg-[#050d1e] py-0 border-[#33476e]/80 gap-0")}>
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[220px] bg-[radial-gradient(ellipse_70%_80%_at_22%_20%,rgba(58,140,255,0.18),transparent_60%),radial-gradient(ellipse_70%_80%_at_75%_10%,rgba(134,156,255,0.12),transparent_55%)]" />
@@ -757,28 +716,31 @@ function BurnedAmountSection() {
           <div className="grid gap-4 lg:grid-cols-[320px_minmax(0,1fr)]">
             <SupplyRing
               title="Total Tokens Burned"
-              value={burnedAmountMetrics.totalSupplyBurned}
-              subtitle={burnedAmountMetrics.totalSupplyBurnedLabel}
-              progress={0.1}
+              value={m.totalSupplyBurned}
+              subtitle={m.totalSupplyBurnedLabel}
+              progress={totalSupplyBurnedPercentage}
             />
 
             <div className="grid gap-4">
               <div className="grid gap-4 xl:grid-cols-2">
                 <BurnedMetricBlock
                   title="Tokens"
-                  items={burnedAmountMetrics.tokens}
-                  footer="0% of Token Supply"
-                  progressValue={100}
+                  items={m.tokens}
+                  footer={`${formatPercentage(burnedTokenPercentage)} of Token Supply`}
+                  progressValue={burnedTokenPercentage}
                 />
                 <BurnedMetricBlock
                   title="Liquidity"
-                  items={burnedAmountMetrics.liquidity}
-                  footer="0% of Token Supply"
-                  progressValue={100}
+                  items={m.liquidity}
+                  footer={`${formatPercentage(burnedLiquidityPercentage)} of Liquidity Supply`}
+                  progressValue={burnedLiquidityPercentage}
                 />
               </div>
 
-              <CirculatingSupplyBlock />
+              <CirculatingSupplyBlock
+                circulating={m.circulating}
+                progressValue={circulatingPercentage}
+              />
             </div>
           </div>
         </div>
@@ -787,7 +749,24 @@ function BurnedAmountSection() {
   );
 }
 
-function LockersSection() {
+function LockersSection({ data }: { data: AuditReport }) {
+  const m = data.lockersMetrics;
+  const totalTokensLockedPercentage =
+    parsePercentage(m.totalTokensLocked) ??
+    resolveMetricPercentage({
+      items: m.tokens,
+      keywords: ["locked"],
+    });
+  const lockedTokenPercentage = resolveMetricPercentage({
+    items: m.tokens,
+    keywords: ["locked"],
+    fallbackText: m.totalTokensLocked,
+  });
+  const lockedLiquidityPercentage = resolveMetricPercentage({
+    items: m.liquidity,
+    keywords: ["locked"],
+  });
+
   return (
     <Card className={cn("relative overflow-hidden bg-[#050d1e] py-0 border-[#33476e]/80 gap-0")}>
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[220px] bg-[radial-gradient(ellipse_70%_80%_at_22%_20%,rgba(58,140,255,0.18),transparent_60%),radial-gradient(ellipse_70%_80%_at_75%_10%,rgba(134,156,255,0.12),transparent_55%)]" />
@@ -811,23 +790,23 @@ function LockersSection() {
           <div className="grid gap-4 lg:grid-cols-[320px_minmax(0,1fr)]">
             <SupplyRing
               title="Total Tokens Locked"
-              value={lockersMetrics.totalTokensLocked}
-              subtitle={lockersMetrics.totalTokensLockedLabel}
-              progress={20.2}
+              value={m.totalTokensLocked}
+              subtitle={m.totalTokensLockedLabel}
+              progress={totalTokensLockedPercentage}
             />
 
             <div className="grid gap-4 xl:grid-cols-2">
               <BurnedMetricBlock
                 title="Tokens"
-                items={lockersMetrics.tokens}
-                footer="20.2% of Token Supply"
-                progressValue={78}
+                items={m.tokens}
+                footer={`${formatPercentage(lockedTokenPercentage)} of Token Supply`}
+                progressValue={lockedTokenPercentage}
               />
               <BurnedMetricBlock
                 title="Liquidity"
-                items={lockersMetrics.liquidity}
-                footer="0% of Token Supply"
-                progressValue={100}
+                items={m.liquidity}
+                footer={`${formatPercentage(lockedLiquidityPercentage)} of Liquidity Supply`}
+                progressValue={lockedLiquidityPercentage}
               />
             </div>
           </div>
@@ -878,7 +857,10 @@ function SecurityCheckBadge({
   );
 }
 
-function SecurityScorePanel() {
+function SecurityScorePanel({ metrics }: { metrics: AuditReport["contractSecurityMetrics"] }) {
+  const scoreProgress =
+    metrics.maxScore > 0 ? clampPercentage((metrics.score / metrics.maxScore) * 100) : 0;
+
   return (
     <div className="relative overflow-hidden rounded-[18px] border border-[#33476e]/60">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[220px] bg-[radial-gradient(ellipse_70%_80%_at_22%_20%,rgba(58,140,255,0.18),transparent_60%),radial-gradient(ellipse_70%_80%_at_75%_10%,rgba(134,156,255,0.12),transparent_55%)]" />
@@ -887,9 +869,9 @@ function SecurityScorePanel() {
         <div className="grid gap-6 p-5 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-center">
           <SupplyRing
             title=""
-            value={`${contractSecurityMetrics.score}`}
+            value={`${metrics.score}`}
             subtitle="Security Rating"
-            progress={contractSecurityMetrics.score}
+            progress={scoreProgress}
           />
 
           <div className="flex flex-col justify-center">
@@ -897,26 +879,26 @@ function SecurityScorePanel() {
               Security Score
             </p>
             <p className="mt-3 text-[58px] leading-none font-semibold tracking-[-0.05em] text-[#82ccff]">
-              {contractSecurityMetrics.score}
+              {metrics.score}
               <span className="ml-1 text-[28px] font-medium text-white/85">
-                /{contractSecurityMetrics.maxScore}
+                /{metrics.maxScore}
               </span>
             </p>
             <p className="mt-5 max-w-[320px] text-[15px] leading-8 text-white/78">
-              {contractSecurityMetrics.summary}
+              {metrics.summary}
             </p>
           </div>
         </div>
 
         <div className="border-t border-[#33476e]/45 bg-[linear-gradient(180deg,rgba(7,13,29,0.08)_0%,rgba(7,13,29,0.32)_100%)] px-5 py-5 text-[15px] text-white/78">
-          {contractSecurityMetrics.summary}
+          {metrics.summary}
         </div>
       </div>
     </div>
   );
 }
 
-function SecurityChecksPanel() {
+function SecurityChecksPanel({ metrics }: { metrics: AuditReport["contractSecurityMetrics"] }) {
   return (
     <div className="relative overflow-hidden rounded-[18px] border border-[#33476e]/60 p-5">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[220px] bg-[radial-gradient(ellipse_70%_80%_at_22%_20%,rgba(58,140,255,0.18),transparent_60%),radial-gradient(ellipse_70%_80%_at_75%_10%,rgba(134,156,255,0.12),transparent_55%)]" />
@@ -927,7 +909,7 @@ function SecurityChecksPanel() {
         </h3>
 
         <div className="mt-5 space-y-0">
-          {contractSecurityMetrics.checks.map((check) => (
+          {metrics.checks.map((check) => (
             <div
               key={check.label}
               className="flex items-center justify-between gap-4 border-b border-[#33476e]/45 py-3 last:border-b-0 last:pb-0 first:pt-0"
@@ -942,7 +924,8 @@ function SecurityChecksPanel() {
   );
 }
 
-function ContractSecurityMetricsSection() {
+function ContractSecurityMetricsSection({ data }: { data: AuditReport }) {
+  const m = data.contractSecurityMetrics;
   return (
     <Card className={cn("relative overflow-hidden bg-[#050d1e] py-0 border-[#33476e]/80 gap-0")}>
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[220px] bg-[radial-gradient(ellipse_70%_80%_at_22%_20%,rgba(58,140,255,0.18),transparent_60%),radial-gradient(ellipse_70%_80%_at_75%_10%,rgba(134,156,255,0.12),transparent_55%)]" />
@@ -963,8 +946,8 @@ function ContractSecurityMetricsSection() {
 
       <CardContent className="relative px-4 pb-5 pt-3 sm:px-5">
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,1fr)]">
-          <SecurityScorePanel />
-          <SecurityChecksPanel />
+          <SecurityScorePanel metrics={m} />
+          <SecurityChecksPanel metrics={m} />
         </div>
       </CardContent>
     </Card>
@@ -1033,7 +1016,8 @@ function InformationPanel({
   );
 }
 
-function ContractInformationSection() {
+function ContractInformationSection({ data }: { data: AuditReport }) {
+  const info = data.contractInformation;
   return (
     <Card className={cn("relative overflow-hidden bg-[#050d1e] py-0 border-[#33476e]/80 gap-0")}>
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[220px] bg-[radial-gradient(ellipse_70%_80%_at_22%_20%,rgba(58,140,255,0.18),transparent_60%),radial-gradient(ellipse_70%_80%_at_75%_10%,rgba(134,156,255,0.12),transparent_55%)]" />
@@ -1054,10 +1038,10 @@ function ContractInformationSection() {
 
       <CardContent className="relative px-4 pb-5 pt-3 sm:px-5">
         <div className="grid gap-4 lg:grid-cols-2">
-          <InformationPanel title="Token Details" rows={contractInformation.tokenDetails} />
+          <InformationPanel title="Token Details" rows={info.tokenDetails} />
           <InformationPanel
             title="Deployment Details"
-            rows={contractInformation.deploymentDetails}
+            rows={info.deploymentDetails}
           />
         </div>
       </CardContent>
@@ -1090,7 +1074,19 @@ function HolderLegendRow({
   );
 }
 
-function OwnershipPrivilegesPanel() {
+function OwnershipPrivilegesPanel({
+  risk,
+  totalSupplyAmount,
+}: {
+  risk: AuditReport["ownershipAndLiquidityRisk"];
+  totalSupplyAmount: number | null;
+}) {
+  const oc = risk.ownerControl;
+  const ownerControlPercentage =
+    sumHolderPercentages(oc.holders, totalSupplyAmount) ??
+    resolvePercentageFromSources([oc.value], oc.progress);
+  const ownerControlValue = formatPercentage(ownerControlPercentage);
+
   return (
     <div className="relative overflow-hidden rounded-[18px] border border-[#33476e]/60">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[220px] bg-[radial-gradient(ellipse_70%_80%_at_22%_20%,rgba(58,140,255,0.18),transparent_60%),radial-gradient(ellipse_70%_80%_at_75%_10%,rgba(134,156,255,0.12),transparent_55%)]" />
@@ -1099,9 +1095,9 @@ function OwnershipPrivilegesPanel() {
         <div className="grid gap-6 p-5 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-center">
           <SupplyRing
             title=""
-            value={ownershipAndLiquidityRisk.ownerControl.value}
-            subtitle={ownershipAndLiquidityRisk.ownerControl.subtitle}
-            progress={ownershipAndLiquidityRisk.ownerControl.progress}
+            value={ownerControlValue}
+            subtitle={oc.subtitle}
+            progress={ownerControlPercentage}
           />
 
           <div className="flex flex-col justify-center">
@@ -1110,7 +1106,7 @@ function OwnershipPrivilegesPanel() {
             </p>
 
             <div className="mt-5 space-y-4">
-              {ownershipAndLiquidityRisk.ownerControl.holders.map((holder) => (
+              {oc.holders.map((holder) => (
                 <HolderLegendRow key={holder.label} {...holder} />
               ))}
             </div>
@@ -1123,7 +1119,7 @@ function OwnershipPrivilegesPanel() {
               <AlertTriangle className="size-5" />
             </div>
             <p className="text-[15px] leading-7 text-white/82">
-              {ownershipAndLiquidityRisk.ownerControl.warning}
+              {oc.warning}
             </p>
           </div>
         </div>
@@ -1132,7 +1128,17 @@ function OwnershipPrivilegesPanel() {
   );
 }
 
-function LiquidityRiskDetailPanel() {
+function LiquidityRiskDetailPanel({
+  risk,
+}: {
+  risk: AuditReport["ownershipAndLiquidityRisk"];
+}) {
+  const lh = risk.liquidityHolder;
+  const liquidityHolderPercentage = resolvePercentageFromSources(
+    [lh.footerValue, lh.footerLabel],
+    lh.progress
+  );
+
   return (
     <div className="grid gap-4">
       <div className="relative overflow-hidden rounded-[18px] border border-[#33476e]/60 p-4 sm:p-5">
@@ -1140,31 +1146,31 @@ function LiquidityRiskDetailPanel() {
 
         <div className="relative">
           <h3 className="text-[18px] font-semibold tracking-[-0.02em] text-white sm:text-[20px]">
-            {ownershipAndLiquidityRisk.liquidityHolder.title}
+            {lh.title}
           </h3>
 
           <div className="mt-5 flex items-center justify-between gap-3 border-t border-[#33476e]/45 pt-4">
             <span className="text-[18px] text-white/88">
-              {ownershipAndLiquidityRisk.liquidityHolder.holder}
+              {lh.holder}
             </span>
             <div className="inline-flex items-center gap-1 rounded-[9px] border border-[#4b4b95]/60 bg-[linear-gradient(180deg,rgba(55,56,118,0.9)_0%,rgba(34,35,84,0.9)_100%)] px-3 py-1 text-[13px] font-semibold text-[#b8c6ff]">
-              <span>{ownershipAndLiquidityRisk.liquidityHolder.chipPrimary}</span>
+              <span>{lh.chipPrimary}</span>
               <span className="text-white/70">
-                {ownershipAndLiquidityRisk.liquidityHolder.chipSecondary}
+                {lh.chipSecondary}
               </span>
             </div>
           </div>
 
           <div className="mt-4">
-            <GlowingProgress value={ownershipAndLiquidityRisk.liquidityHolder.progress} />
+            <GlowingProgress value={liquidityHolderPercentage} />
           </div>
 
           <div className="mt-3 flex items-center justify-between gap-3 text-[14px]">
             <span className="text-white/72">
-              {ownershipAndLiquidityRisk.liquidityHolder.footerLabel}
+              {lh.footerLabel}
             </span>
             <span className="font-semibold text-white">
-              {ownershipAndLiquidityRisk.liquidityHolder.footerValue}
+              {formatPercentage(liquidityHolderPercentage)}
             </span>
           </div>
         </div>
@@ -1175,21 +1181,21 @@ function LiquidityRiskDetailPanel() {
 
         <div className="relative">
           <h3 className="text-[18px] font-semibold tracking-[-0.02em] text-white sm:text-[20px]">
-            {ownershipAndLiquidityRisk.lockedLiquidity.title}
+            {risk.lockedLiquidity.title}
           </h3>
 
           <div className="mt-5 border-t border-[#33476e]/45 pt-4">
             <div className="flex items-center justify-between gap-3 text-[18px] font-medium text-white/88">
-              <span>{ownershipAndLiquidityRisk.lockedLiquidity.leftValue}</span>
-              <span>{ownershipAndLiquidityRisk.lockedLiquidity.rightValue}</span>
+              <span>{risk.lockedLiquidity.leftValue}</span>
+              <span>{risk.lockedLiquidity.rightValue}</span>
             </div>
 
             <div className="mt-3 flex items-center justify-between gap-3 text-[14px]">
               <span className="text-white/72">
-                {ownershipAndLiquidityRisk.lockedLiquidity.subLabel}
+                {risk.lockedLiquidity.subLabel}
               </span>
               <span className="font-semibold text-white">
-                {ownershipAndLiquidityRisk.lockedLiquidity.rightPercent}
+                {risk.lockedLiquidity.rightPercent}
               </span>
             </div>
           </div>
@@ -1199,7 +1205,9 @@ function LiquidityRiskDetailPanel() {
   );
 }
 
-function OwnershipAndPrivilegesSection() {
+function OwnershipAndPrivilegesSection({ data }: { data: AuditReport }) {
+  const risk = data.ownershipAndLiquidityRisk;
+  const totalSupplyAmount = resolveTotalSupplyAmount(data);
   return (
     <Card className={cn("relative overflow-hidden bg-[#050d1e] py-0 border-[#33476e]/80 gap-0")}>
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[220px] bg-[radial-gradient(ellipse_70%_80%_at_22%_20%,rgba(58,140,255,0.18),transparent_60%),radial-gradient(ellipse_70%_80%_at_75%_10%,rgba(134,156,255,0.12),transparent_55%)]" />
@@ -1218,14 +1226,14 @@ function OwnershipAndPrivilegesSection() {
             <h2 className="text-[20px] font-semibold tracking-[-0.02em] text-white sm:text-[22px]">
               Ownership & Privileges
             </h2>
-            <OwnershipPrivilegesPanel />
+            <OwnershipPrivilegesPanel risk={risk} totalSupplyAmount={totalSupplyAmount} />
           </div>
 
           <div className="space-y-4">
             <h2 className="text-[20px] font-semibold tracking-[-0.02em] text-white sm:text-[22px]">
               Liquidity Risk
             </h2>
-            <LiquidityRiskDetailPanel />
+            <LiquidityRiskDetailPanel risk={risk} />
           </div>
         </div>
       </CardContent>
@@ -1259,7 +1267,22 @@ function DistributionLegendRow({
   );
 }
 
-function HolderDistributionPanel() {
+function HolderDistributionPanel({
+  analysis,
+}: {
+  analysis: AuditReport["holderDistributionAnalysis"];
+}) {
+  const scorePercentage = resolvePercentageFromSources(
+    [analysis.score.value],
+    analysis.score.progress
+  );
+  const whaleCategoryPercentage =
+    resolveActiveSharePercentage(analysis.whaleCategory.rows) ??
+    resolvePercentageFromSources(
+      [analysis.whaleCategory.value, analysis.score.value],
+      analysis.whaleCategory.progress
+    );
+
   return (
     <div className="relative overflow-hidden rounded-[18px] border border-[#33476e]/60">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[220px] bg-[radial-gradient(ellipse_70%_80%_at_22%_20%,rgba(58,140,255,0.18),transparent_60%),radial-gradient(ellipse_70%_80%_at_75%_10%,rgba(134,156,255,0.12),transparent_55%)]" />
@@ -1268,27 +1291,27 @@ function HolderDistributionPanel() {
         <div className="grid gap-6 p-5 lg:grid-cols-[190px_minmax(0,1fr)] lg:items-center">
           <SupplyRing
             title=""
-            value={holderDistributionAnalysis.score.value}
-            subtitle={holderDistributionAnalysis.score.subtitle}
-            progress={holderDistributionAnalysis.score.progress}
+            value={formatPercentage(scorePercentage)}
+            subtitle={analysis.score.subtitle}
+            progress={scorePercentage}
           />
 
           <div className="flex flex-col justify-center">
             <div className="flex items-end justify-between gap-3">
               <h3 className="text-[26px] font-semibold tracking-[-0.03em] text-white sm:text-[28px]">
-                {holderDistributionAnalysis.whaleCategory.title}
+                {analysis.whaleCategory.title}
               </h3>
               <span className="text-[22px] font-semibold text-white">
-                {holderDistributionAnalysis.whaleCategory.value}
+                {formatPercentage(whaleCategoryPercentage)}
               </span>
             </div>
 
             <div className="mt-3">
-              <GlowingProgress value={holderDistributionAnalysis.whaleCategory.progress} />
+              <GlowingProgress value={whaleCategoryPercentage} />
             </div>
 
             <div className="mt-4">
-              {holderDistributionAnalysis.whaleCategory.rows.map((row) => (
+              {analysis.whaleCategory.rows.map((row) => (
                 <DistributionLegendRow key={row.label} {...row} />
               ))}
             </div>
@@ -1296,14 +1319,22 @@ function HolderDistributionPanel() {
         </div>
 
         <div className="border-t border-[#33476e]/45 bg-[linear-gradient(180deg,rgba(7,13,29,0.08)_0%,rgba(7,13,29,0.32)_100%)] px-5 py-5 text-[15px] text-white/78">
-          {holderDistributionAnalysis.note}
+          {analysis.note}
         </div>
       </div>
     </div>
   );
 }
 
-function CompactLiquidityRiskPanel() {
+function CompactLiquidityRiskPanel({
+  analysis,
+}: {
+  analysis: AuditReport["holderDistributionAnalysis"];
+}) {
+  const lr = analysis.liquidityRisk;
+  const liquidityRiskPercentage = resolvePercentageFromSources([lr.score], lr.progress);
+  const bottomSharePercentage = resolvePercentageFromSources([lr.bottomShare]);
+
   return (
     <div className="relative overflow-hidden rounded-[18px] border border-[#33476e]/60 p-4 sm:p-5">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[220px] bg-[radial-gradient(ellipse_70%_80%_at_22%_20%,rgba(58,140,255,0.18),transparent_60%),radial-gradient(ellipse_70%_80%_at_75%_10%,rgba(134,156,255,0.12),transparent_55%)]" />
@@ -1320,7 +1351,7 @@ function CompactLiquidityRiskPanel() {
                 <div
                   className="absolute inset-0 rounded-full"
                   style={{
-                    background: `conic-gradient(from 220deg, rgba(117,204,255,1) 0deg, rgba(112,141,255,1) ${holderDistributionAnalysis.liquidityRisk.progress * 3.6}deg, rgba(210,223,255,0.95) ${holderDistributionAnalysis.liquidityRisk.progress * 3.6}deg, rgba(210,223,255,0.95) 360deg)`,
+                    background: buildRingBackground(liquidityRiskPercentage),
                     boxShadow:
                       "0 0 22px rgba(96,183,255,0.26), inset 0 0 18px rgba(96,183,255,0.18)",
                   }}
@@ -1329,10 +1360,10 @@ function CompactLiquidityRiskPanel() {
                 <div className="absolute inset-[15px] rounded-full border border-[#5d7bc5]/30" />
                 <div className="absolute inset-0 flex flex-col items-center justify-center px-3 text-center">
                   <span className="text-[24px] leading-none font-semibold tracking-[-0.04em] text-[#dff6ff]">
-                    {holderDistributionAnalysis.liquidityRisk.score}
+                    {lr.score}
                   </span>
                   <span className="mt-1 text-[12px] text-white/78">
-                    {holderDistributionAnalysis.liquidityRisk.subtitle}
+                    {lr.subtitle}
                   </span>
                 </div>
               </div>
@@ -1340,16 +1371,16 @@ function CompactLiquidityRiskPanel() {
 
             <div className="space-y-3">
               <div className="text-[16px] font-medium text-white/88">
-                {holderDistributionAnalysis.liquidityRisk.holder}
+                {lr.holder}
               </div>
               <div className="rounded-[10px] border border-[#33476e]/55 bg-[rgba(10,18,40,0.6)] px-3 py-2">
-                <GlowingProgress value={holderDistributionAnalysis.liquidityRisk.progress} />
+                <GlowingProgress value={liquidityRiskPercentage} />
               </div>
               <div className="text-[15px] text-white/75">
-                {holderDistributionAnalysis.liquidityRisk.primaryValue}
+                {lr.primaryValue}
               </div>
               <div className="inline-flex rounded-[9px] border border-[#4d3f70]/55 bg-[linear-gradient(180deg,rgba(58,45,90,0.88)_0%,rgba(38,29,60,0.88)_100%)] px-3 py-1 text-[13px] font-medium text-[#d8d0ff]">
-                {holderDistributionAnalysis.liquidityRisk.secondaryValue}
+                {lr.secondaryValue}
               </div>
             </div>
           </div>
@@ -1359,17 +1390,17 @@ function CompactLiquidityRiskPanel() {
               α
             </div>
             <span className="text-[15px] font-semibold text-white">
-              {holderDistributionAnalysis.liquidityRisk.bottomShare}
+              {lr.bottomShare}
             </span>
             <div className="min-w-0 flex-1">
               <GlowingProgress
-                value={5.4}
+                value={bottomSharePercentage}
                 trackClassName="h-2"
                 fillClassName="bg-[linear-gradient(90deg,#ffffff_0%,#dfe8ff_100%)] shadow-none"
               />
             </div>
             <span className="text-[14px] text-white/74">
-              {holderDistributionAnalysis.liquidityRisk.bottomAmount}
+              {lr.bottomAmount}
             </span>
           </div>
         </div>
@@ -1378,7 +1409,8 @@ function CompactLiquidityRiskPanel() {
   );
 }
 
-function HolderDistributionAnalysisSection() {
+function HolderDistributionAnalysisSection({ data }: { data: AuditReport }) {
+  const analysis = data.holderDistributionAnalysis;
   return (
     <Card className={cn("relative overflow-hidden bg-[#050d1e] py-0 border-[#33476e]/80 gap-0")}>
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[220px] bg-[radial-gradient(ellipse_70%_80%_at_22%_20%,rgba(58,140,255,0.18),transparent_60%),radial-gradient(ellipse_70%_80%_at_75%_10%,rgba(134,156,255,0.12),transparent_55%)]" />
@@ -1399,8 +1431,8 @@ function HolderDistributionAnalysisSection() {
 
       <CardContent className="relative px-4 pb-5 pt-3 sm:px-5">
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1.52fr)_minmax(290px,0.68fr)]">
-          <HolderDistributionPanel />
-          <CompactLiquidityRiskPanel />
+          <HolderDistributionPanel analysis={analysis} />
+          <CompactLiquidityRiskPanel analysis={analysis} />
         </div>
       </CardContent>
     </Card>
@@ -1418,12 +1450,14 @@ function TaxProgressRow({
   progress: number;
   fillClassName?: string;
 }) {
+  const displayProgress = resolvePercentageFromSources([value], progress);
+
   return (
     <div className="grid grid-cols-[104px_minmax(0,1fr)_52px] items-center gap-4 sm:grid-cols-[110px_minmax(0,1fr)_64px]">
       <span className="text-[16px] text-white/88 sm:text-[17px]">{label}</span>
       <div className="flex items-center gap-2">
         <div className="min-w-0 flex-1">
-          <GlowingProgress value={progress} fillClassName={fillClassName} />
+          <GlowingProgress value={displayProgress} fillClassName={fillClassName} />
         </div>
         <span className="shrink-0 text-[14px] font-medium text-white/85">{value}</span>
       </div>
@@ -1432,7 +1466,7 @@ function TaxProgressRow({
   );
 }
 
-function TaxBreakdownGrid() {
+function TaxBreakdownGrid({ taxAnalysis }: { taxAnalysis: AuditReport["transactionTaxAnalysis"] }) {
   return (
     <div className="overflow-hidden rounded-[14px] border border-[#33476e]/55">
       <div className="grid grid-cols-[140px_minmax(0,1fr)_minmax(0,1fr)] bg-[linear-gradient(180deg,rgba(8,15,34,0.4)_0%,rgba(8,15,34,0.18)_100%)]">
@@ -1444,8 +1478,8 @@ function TaxBreakdownGrid() {
         </div>
         <div className="px-4 py-3 text-[15px] font-semibold text-white">Sell</div>
 
-        {transactionTaxAnalysis.breakdownRows.map((row) => (
-          <>
+        {taxAnalysis.breakdownRows.map((row) => (
+          <Fragment key={`${row.taxValue}-${row.buyLabel}-${row.sellLabel}`}>
             <div className="flex items-center gap-2 border-t border-r border-[#33476e]/45 px-4 py-3">
               <span className="text-[15px] text-white/82">{row.tax}</span>
               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[linear-gradient(180deg,#24d7ff_0%,#138db4_100%)] text-[#d7feff] shadow-[0_0_14px_rgba(36,215,255,0.28)]">
@@ -1463,39 +1497,43 @@ function TaxBreakdownGrid() {
               <span className="max-w-[120px] text-[12px] leading-4 text-white/68">{row.sellLabel}</span>
               <span className="shrink-0 text-[15px] font-medium text-white">{row.sellValue}</span>
             </div>
-          </>
+          </Fragment>
         ))}
       </div>
     </div>
   );
 }
 
-function TransactionTaxPanel() {
+function TransactionTaxPanel({ taxAnalysis }: { taxAnalysis: AuditReport["transactionTaxAnalysis"] }) {
   return (
     <div className="relative overflow-hidden rounded-[18px] border border-[#33476e]/60 p-4 sm:p-5">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[220px] bg-[radial-gradient(ellipse_70%_80%_at_22%_20%,rgba(58,140,255,0.18),transparent_60%),radial-gradient(ellipse_70%_80%_at_75%_10%,rgba(134,156,255,0.12),transparent_55%)]" />
 
       <div className="relative">
         <div className="space-y-6">
-          {transactionTaxAnalysis.taxes.map((tax) => (
+          {taxAnalysis.taxes.map((tax) => (
             <TaxProgressRow key={tax.label} {...tax} />
           ))}
         </div>
 
         <div className="mt-6">
-          <TaxBreakdownGrid />
+          <TaxBreakdownGrid taxAnalysis={taxAnalysis} />
         </div>
 
         <p className="mt-5 text-[15px] leading-7 text-white/78">
-          {transactionTaxAnalysis.note}
+          {taxAnalysis.note}
         </p>
       </div>
     </div>
   );
 }
 
-function TaxLiquidityRiskPanel() {
-  const risk = transactionTaxAnalysis.liquidityRisk;
+function TaxLiquidityRiskPanel({ taxAnalysis }: { taxAnalysis: AuditReport["transactionTaxAnalysis"] }) {
+  const risk = taxAnalysis.liquidityRisk;
+  const liquidityRiskPercentage = resolvePercentageFromSources(
+    [risk.footerValue, risk.footerLabel],
+    risk.progress
+  );
 
   return (
     <div className="relative overflow-hidden rounded-[18px] border border-[#33476e]/60 p-4 sm:p-5">
@@ -1517,12 +1555,12 @@ function TaxLiquidityRiskPanel() {
           </div>
 
           <div className="mt-4">
-            <GlowingProgress value={risk.progress} />
+            <GlowingProgress value={liquidityRiskPercentage} />
           </div>
 
           <div className="mt-3 flex items-center justify-between gap-3 text-[14px]">
             <span className="text-white/72">{risk.footerLabel}</span>
-            <span className="font-semibold text-white">{risk.footerValue}</span>
+            <span className="font-semibold text-white">{formatPercentage(liquidityRiskPercentage)}</span>
           </div>
 
           <div className="mt-6 border-t border-[#33476e]/45 pt-5">
@@ -1544,7 +1582,8 @@ function TaxLiquidityRiskPanel() {
   );
 }
 
-function TransactionTaxAnalysisSection() {
+function TransactionTaxAnalysisSection({ data }: { data: AuditReport }) {
+  const taxAnalysis = data.transactionTaxAnalysis;
   return (
     <Card className={cn("relative overflow-hidden bg-[#050d1e] py-0 border-[#33476e]/80 gap-0")}>
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[220px] bg-[radial-gradient(ellipse_70%_80%_at_22%_20%,rgba(58,140,255,0.18),transparent_60%),radial-gradient(ellipse_70%_80%_at_75%_10%,rgba(134,156,255,0.12),transparent_55%)]" />
@@ -1565,8 +1604,8 @@ function TransactionTaxAnalysisSection() {
 
       <CardContent className="relative px-4 pb-5 pt-3 sm:px-5">
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1.42fr)_minmax(300px,0.78fr)]">
-          <TransactionTaxPanel />
-          <TaxLiquidityRiskPanel />
+          <TransactionTaxPanel taxAnalysis={taxAnalysis} />
+          <TaxLiquidityRiskPanel taxAnalysis={taxAnalysis} />
         </div>
       </CardContent>
     </Card>
@@ -1584,7 +1623,7 @@ function DetectionCheckRow({ label }: { label: string }) {
   );
 }
 
-function HoneypotDetectionPanel() {
+function HoneypotDetectionPanel({ section }: { section: AuditReport["honeypotAndAntiWhale"]["honeypot"] }) {
   return (
     <div className="relative overflow-hidden rounded-[18px] border border-[#33476e]/60 p-4 sm:p-5">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[220px] bg-[radial-gradient(ellipse_70%_80%_at_22%_20%,rgba(58,140,255,0.18),transparent_60%),radial-gradient(ellipse_70%_80%_at_75%_10%,rgba(134,156,255,0.12),transparent_55%)]" />
@@ -1604,11 +1643,11 @@ function HoneypotDetectionPanel() {
 
             <div>
               <div className="inline-flex items-center rounded-[10px] border border-[#416f66]/55 bg-[linear-gradient(180deg,rgba(33,76,72,0.88)_0%,rgba(21,52,49,0.88)_100%)] px-4 py-3 text-[18px] font-medium text-[#dffef3] shadow-[0_1px_0_rgba(255,255,255,0.08)_inset]">
-                {honeypotAndAntiWhale.honeypot.status}
+                {section.status}
               </div>
 
               <div className="mt-4 space-y-3">
-                {honeypotAndAntiWhale.honeypot.checks.map((item) => (
+                {section.checks.map((item) => (
                   <DetectionCheckRow key={item} label={item} />
                 ))}
               </div>
@@ -1616,7 +1655,7 @@ function HoneypotDetectionPanel() {
           </div>
 
           <p className="mt-6 text-[14px] text-white/72">
-            {honeypotAndAntiWhale.honeypot.note}
+            {section.note}
           </p>
         </div>
       </div>
@@ -1624,7 +1663,17 @@ function HoneypotDetectionPanel() {
   );
 }
 
-function AntiWhaleMechanismPanel() {
+function AntiWhaleMechanismPanel({
+  section,
+  totalSupplyAmount,
+}: {
+  section: AuditReport["honeypotAndAntiWhale"]["antiWhale"];
+  totalSupplyAmount: number | null;
+}) {
+  const antiWhalePercentage =
+    resolveItemSharePercentage(section.ringValue, totalSupplyAmount) ??
+    resolvePercentageFromSources([section.footerRight, section.footerLeft], section.progress);
+
   return (
     <div className="relative overflow-hidden rounded-[18px] border border-[#33476e]/60 p-4 sm:p-5">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[220px] bg-[radial-gradient(ellipse_70%_80%_at_22%_20%,rgba(58,140,255,0.18),transparent_60%),radial-gradient(ellipse_70%_80%_at_75%_10%,rgba(134,156,255,0.12),transparent_55%)]" />
@@ -1641,7 +1690,7 @@ function AntiWhaleMechanismPanel() {
                 <div
                   className="absolute inset-0 rounded-full"
                   style={{
-                    background: `conic-gradient(from 220deg, rgba(117,204,255,1) 0deg, rgba(112,141,255,1) ${honeypotAndAntiWhale.antiWhale.progress * 3.6}deg, rgba(210,223,255,0.95) ${honeypotAndAntiWhale.antiWhale.progress * 3.6}deg, rgba(210,223,255,0.95) 360deg)`,
+                    background: buildRingBackground(antiWhalePercentage),
                     boxShadow:
                       "0 0 22px rgba(96,183,255,0.26), inset 0 0 18px rgba(96,183,255,0.18)",
                   }}
@@ -1650,10 +1699,10 @@ function AntiWhaleMechanismPanel() {
                 <div className="absolute inset-[15px] rounded-full border border-[#5d7bc5]/30" />
                 <div className="absolute inset-0 flex flex-col items-center justify-center px-3 text-center">
                   <span className="text-[24px] leading-none font-semibold tracking-[-0.04em] text-[#dff6ff]">
-                    {honeypotAndAntiWhale.antiWhale.ringValue}
+                    {section.ringValue}
                   </span>
                   <span className="mt-1 text-[12px] text-white/78">
-                    {honeypotAndAntiWhale.antiWhale.ringSubtitle}
+                    {section.ringSubtitle}
                   </span>
                 </div>
               </div>
@@ -1661,24 +1710,24 @@ function AntiWhaleMechanismPanel() {
 
             <div>
               <div className="text-[16px] font-semibold text-white/92">
-                {honeypotAndAntiWhale.antiWhale.title}
+                {section.title}
               </div>
               <div className="mt-1 text-[13px] text-white/66">
-                {honeypotAndAntiWhale.antiWhale.subLabel}
+                {section.subLabel}
               </div>
 
               <div className="mt-4">
-                <GlowingProgress value={honeypotAndAntiWhale.antiWhale.progress} />
+                <GlowingProgress value={antiWhalePercentage} />
               </div>
 
               <div className="mt-3 flex items-center justify-between gap-3 text-[13px]">
-                <span className="text-white/72">{honeypotAndAntiWhale.antiWhale.footerLeft}</span>
-                <span className="font-semibold text-white">{honeypotAndAntiWhale.antiWhale.footerRight}</span>
+                <span className="text-white/72">{`${formatPercentage(antiWhalePercentage)} of Total Supply`}</span>
+                <span className="font-semibold text-white">{formatPercentage(antiWhalePercentage)}</span>
               </div>
 
               <div className="mt-3 flex items-center justify-between gap-3 text-[13px]">
-                <span className="font-medium text-white/84">{honeypotAndAntiWhale.antiWhale.baseValue}</span>
-                <span className="text-white/55">{honeypotAndAntiWhale.antiWhale.baseSubLabel}</span>
+                <span className="font-medium text-white/84">{section.baseValue}</span>
+                <span className="text-white/55">{section.baseSubLabel}</span>
               </div>
             </div>
           </div>
@@ -1686,7 +1735,7 @@ function AntiWhaleMechanismPanel() {
 
         <div className="mt-4 rounded-[16px] border border-[#33476e]/55 bg-[linear-gradient(180deg,rgba(6,13,30,0.45)_0%,rgba(6,13,30,0.2)_100%)] p-4">
           <div className="space-y-3">
-            {honeypotAndAntiWhale.antiWhale.statRows.map((row) => (
+            {section.statRows.map((row) => (
               <div
                 key={row.label}
                 className="grid grid-cols-[minmax(0,1fr)_72px_88px] items-center gap-3 border-b border-[#33476e]/40 pb-3 last:border-b-0 last:pb-0"
@@ -1701,7 +1750,7 @@ function AntiWhaleMechanismPanel() {
           </div>
 
           <p className="mt-5 text-[13px] leading-6 text-white/68">
-            {honeypotAndAntiWhale.antiWhale.note}
+            {section.note}
           </p>
         </div>
       </div>
@@ -1709,7 +1758,9 @@ function AntiWhaleMechanismPanel() {
   );
 }
 
-function HoneypotAndAntiWhaleSection() {
+function HoneypotAndAntiWhaleSection({ data }: { data: AuditReport }) {
+  const h = data.honeypotAndAntiWhale;
+  const totalSupplyAmount = resolveTotalSupplyAmount(data);
   return (
     <Card className={cn("relative overflow-hidden bg-[#050d1e] py-0 border-[#33476e]/80 gap-0")}>
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[220px] bg-[radial-gradient(ellipse_70%_80%_at_22%_20%,rgba(58,140,255,0.18),transparent_60%),radial-gradient(ellipse_70%_80%_at_75%_10%,rgba(134,156,255,0.12),transparent_55%)]" />
@@ -1724,28 +1775,40 @@ function HoneypotAndAntiWhaleSection() {
 
       <CardContent className="relative px-4 py-5 sm:px-5">
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(340px,1fr)]">
-          <HoneypotDetectionPanel />
-          <AntiWhaleMechanismPanel />
+          <HoneypotDetectionPanel section={h.honeypot} />
+          <AntiWhaleMechanismPanel
+            section={h.antiWhale}
+            totalSupplyAmount={totalSupplyAmount}
+          />
         </div>
       </CardContent>
     </Card>
   );
 }
 
+const PROJECT_ICON_MAP: Record<string, ComponentType<{ className?: string }>> = {
+  Globe,
+  Hexagon,
+  Link2,
+  Zap,
+  CalendarDays,
+};
+
 function ProjectActionButton({
   label,
-  icon: Icon,
+  icon: iconName,
 }: {
   label: string;
-  icon: typeof Globe;
+  icon?: string;
 }) {
+  const ResolvedIcon = (iconName ? PROJECT_ICON_MAP[iconName] : undefined) ?? Globe;
   return (
     <Button
       type="button"
       variant="ghost"
       className="h-11 rounded-[12px] border border-[#33476e]/55 bg-[linear-gradient(180deg,rgba(9,16,36,0.86)_0%,rgba(5,10,24,0.78)_100%)] px-4 text-[16px] font-medium text-white/88 shadow-[0_1px_0_rgba(255,255,255,0.08)_inset] hover:bg-[linear-gradient(180deg,rgba(14,22,46,0.9)_0%,rgba(8,14,30,0.84)_100%)]"
     >
-      <Icon className="mr-2 size-4.5 text-[#74c6ff]" />
+      <ResolvedIcon className="mr-2 size-4.5 text-[#74c6ff]" />
       {label}
     </Button>
   );
@@ -1753,13 +1816,14 @@ function ProjectActionButton({
 
 function ProjectFeatureBadge({
   label,
-  icon: Icon,
+  icon: iconName,
   tone,
 }: {
   label: string;
-  icon: typeof Hexagon;
+  icon?: string;
   tone: "amber" | "indigo" | "blue";
 }) {
+  const ResolvedIcon = (iconName ? PROJECT_ICON_MAP[iconName] : undefined) ?? Hexagon;
   const toneMap = {
     amber: "text-[#f0b45b]",
     indigo: "text-[#7e8dff]",
@@ -1768,13 +1832,14 @@ function ProjectFeatureBadge({
 
   return (
     <div className="inline-flex items-center gap-2 rounded-[12px] border border-[#33476e]/50 bg-[linear-gradient(180deg,rgba(9,16,36,0.82)_0%,rgba(5,10,24,0.72)_100%)] px-4 py-3 text-[15px] font-medium text-white/88">
-      <Icon className={cn("size-4.5 shrink-0", toneMap[tone])} />
+      <ResolvedIcon className={cn("size-4.5 shrink-0", toneMap[tone])} />
       <span>{label}</span>
     </div>
   );
 }
 
-function ProjectOverviewSection() {
+function ProjectOverviewSection({ data }: { data: AuditReport }) {
+  const overview = data.projectOverview;
   return (
     <Card className={cn("relative overflow-hidden bg-[#050d1e] py-0 border-[#33476e]/80 gap-0")}>
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[220px] bg-[radial-gradient(ellipse_70%_80%_at_22%_20%,rgba(58,140,255,0.18),transparent_60%),radial-gradient(ellipse_70%_80%_at_75%_10%,rgba(134,156,255,0.12),transparent_55%)]" />
@@ -1791,26 +1856,26 @@ function ProjectOverviewSection() {
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1.65fr)_280px] lg:items-stretch">
           <div className="rounded-[18px] border border-[#33476e]/55 bg-[linear-gradient(180deg,rgba(7,13,29,0.45)_0%,rgba(7,13,29,0.22)_100%)] p-5">
             <h2 className="text-[28px] font-semibold tracking-[-0.04em] text-white sm:text-[32px]">
-              {projectOverview.title}
+              {overview.title}
             </h2>
 
             <div className="mt-3 inline-flex items-center gap-2 text-[16px] text-white/72">
               <Globe className="size-4.5 text-[#74c6ff]" />
-              <span>{projectOverview.website}</span>
+              <span>{overview.website}</span>
             </div>
 
             <div className="mt-5 flex flex-wrap gap-3">
-              {projectOverview.actions.map((action) => (
+              {overview.actions.map((action) => (
                 <ProjectActionButton key={action.label} {...action} />
               ))}
             </div>
 
             <p className="mt-7 max-w-3xl text-[18px] leading-9 text-white/82 sm:text-[19px]">
-              {projectOverview.description}
+              {overview.description}
             </p>
 
             <div className="mt-7 flex flex-wrap gap-3">
-              {projectOverview.badges.map((badge) => (
+              {overview.badges.map((badge) => (
                 <ProjectFeatureBadge key={badge.label} {...badge} />
               ))}
             </div>
@@ -1818,7 +1883,7 @@ function ProjectOverviewSection() {
             <div className="mt-6 flex items-center gap-3 text-[16px] text-white/70">
               <CalendarDays className="size-4.5 text-white/55" />
               <span>
-                Onboarded: <span className="text-white/88">{projectOverview.onboarded}</span>
+                Onboarded: <span className="text-white/88">{overview.onboarded}</span>
               </span>
             </div>
           </div>
@@ -1843,7 +1908,7 @@ function ProjectOverviewSection() {
                 </div>
                 <div>
                   <div className="text-[15px] font-semibold text-white/92">
-                    {projectOverview.verifiedLabel}
+                    {overview.verifiedLabel}
                   </div>
                   <div className="text-[12px] tracking-[0.18em] text-[#6fc2ff] uppercase">
                     ODICYBER
@@ -1858,7 +1923,11 @@ function ProjectOverviewSection() {
   );
 }
 
-export function AuditSummary() {
+export interface AuditSummaryProps {
+  data?: AuditReport;
+}
+
+export function AuditSummary({ data = defaultAuditReport }: AuditSummaryProps) {
   return (
     <main className="max-w-6xl mx-auto relative isolate min-h-screen overflow-hidden bg-[linear-gradient(180deg,#0a1525_0%,#0d1b2e_30%,#0a1525_100%)]">
       {/* Radial gradient - lighter at top center */}
@@ -1913,50 +1982,50 @@ export function AuditSummary() {
         </header>
 
         <section className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          {summaryCards.map((card) => (
+          {data.summaryCards.map((card) => (
             <SummaryCard key={card.label} {...card} />
           ))}
         </section>
 
         <section className="mt-4 flex flex-col gap-4 md:grid lg:grid-cols-[minmax(0,1fr)_364px]">
-          <FindingsBreakdown />
-          <AuditDetailsCard />
+          <FindingsBreakdown data={data} />
+          <AuditDetailsCard data={data} />
         </section>
 
         <section className="mt-4">
-          <BurnedAmountSection />
+          <BurnedAmountSection data={data} />
         </section>
 
         <section className="mt-4">
-          <LockersSection />
+          <LockersSection data={data} />
         </section>
 
         <section className="mt-4">
-          <ContractSecurityMetricsSection />
+          <ContractSecurityMetricsSection data={data} />
         </section>
 
         <section className="mt-4">
-          <ContractInformationSection />
+          <ContractInformationSection data={data} />
         </section>
 
         <section className="mt-4">
-          <OwnershipAndPrivilegesSection />
+          <OwnershipAndPrivilegesSection data={data} />
         </section>
 
         <section className="mt-4">
-          <HolderDistributionAnalysisSection />
+          <HolderDistributionAnalysisSection data={data} />
         </section>
 
         <section className="mt-4">
-          <TransactionTaxAnalysisSection />
+          <TransactionTaxAnalysisSection data={data} />
         </section>
 
         <section className="mt-4">
-          <HoneypotAndAntiWhaleSection />
+          <HoneypotAndAntiWhaleSection data={data} />
         </section>
 
         <section className="mt-4">
-          <ProjectOverviewSection />
+          <ProjectOverviewSection data={data} />
         </section>
       </div>
     </main>
