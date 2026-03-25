@@ -24,7 +24,12 @@ export function FindingsSectionForm({
   const addIssue = () => {
     onChange([
       ...issues,
-      { id: generateId(), title: "New finding", severity: "Minor" },
+      {
+        id: generateId(),
+        title: "New finding",
+        severity: "Minor",
+        status: "Acknowledged",
+      },
     ]);
   };
 
@@ -78,6 +83,20 @@ export function FindingsSectionForm({
                 <option value="Medium">Medium</option>
                 <option value="Minor">Minor</option>
                 <option value="Resolved">Resolved</option>
+              </select>
+              <select
+                value={issue.status ?? "Acknowledged"}
+                onChange={(e) =>
+                  updateIssue(i, { status: e.target.value })
+                }
+                className="w-full max-w-[160px] rounded border border-slate-600 bg-slate-900 px-2 py-1 text-xs text-slate-100 focus:border-sky-500 focus:outline-none"
+              >
+                <option value="Acknowledged">Acknowledged</option>
+                <option value="Open">Open</option>
+                <option value="In progress">In progress</option>
+                <option value="Mitigated">Mitigated</option>
+                <option value="Resolved">Resolved</option>
+                <option value="Closed">Closed</option>
               </select>
             </div>
             <button

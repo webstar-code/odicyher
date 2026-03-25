@@ -254,9 +254,13 @@ export function AuditReportForm({
         {activeTab === "project-overview" && (
           <ProjectOverviewSectionForm
             projectOverview={formData.projectOverview}
+            brandName={formData.brandName ?? ""}
+            brandLogoSrc={formData.brandLogoSrc ?? ""}
+            reportSlug={normalizeSlug(slug) || baselineRecord.slug}
             onChange={(projectOverview) =>
               updateSection({ projectOverview })
             }
+            onBrandingChange={(patch) => updateSection(patch)}
           />
         )}
       </div>

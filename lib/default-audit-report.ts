@@ -1,6 +1,8 @@
 import { createAuditReport } from "@/lib/audit-report-schema";
 
 export const defaultAuditReport = createAuditReport({
+  brandName: "ODICYBER",
+  brandLogoSrc: "/images/logo.svg",
   summaryCards: [
     { label: "Total Findings", value: 3, icon: "findings", tone: "total" },
     { label: "Critical", value: 0, icon: "critical", tone: "critical" },
@@ -14,9 +16,24 @@ export const defaultAuditReport = createAuditReport({
     { label: "Minor", count: 3, tone: "minor" },
   ],
   issues: [
-    { id: "NWES", title: "ERC-20 Standard Noncompliance", severity: "Minor" },
-    { id: "MC", title: "Missing Validation Check", severity: "Minor" },
-    { id: "L19", title: "Compiler Version Not Pinned", severity: "Minor" },
+    {
+      id: "NWES",
+      title: "ERC-20 Standard Noncompliance",
+      severity: "Minor",
+      status: "Acknowledged",
+    },
+    {
+      id: "MC",
+      title: "Missing Validation Check",
+      severity: "Minor",
+      status: "Acknowledged",
+    },
+    {
+      id: "L19",
+      title: "Compiler Version Not Pinned",
+      severity: "Minor",
+      status: "Acknowledged",
+    },
   ],
   detailRows: [
     { label: "Network", value: "Binance Smart Chain" },
@@ -235,8 +252,8 @@ export const defaultAuditReport = createAuditReport({
     description:
       "Milestone HODL Token (MHT) is a decentralized protocol on the BNB Smart Chain designed to transform market growth into automated rewards for holders.",
     actions: [
-      { label: "Website", icon: "Globe" },
-      { label: "Twitter", icon: "Link2" },
+      { label: "Website", icon: "Globe", href: "https://dev-mht.github.io" },
+      { label: "Twitter", icon: "Link2", href: "" },
     ],
     badges: [
       { label: "BNB Chain", icon: "Hexagon", tone: "amber" },

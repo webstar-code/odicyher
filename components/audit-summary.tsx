@@ -33,6 +33,66 @@ import { cn } from "@/lib/utils";
 import type { AuditReport, StatKey } from "@/types/audit-report";
 import { defaultAuditReport } from "@/lib/default-audit-report";
 
+const DEFAULT_BRAND_NAME = "ODICYBER";
+const DEFAULT_BRAND_LOGO_SRC = "/images/logo.svg";
+
+type ResolvedAuditBrand = { name: string; logoSrc: string };
+
+function resolveAuditBrand(data: AuditReport): ResolvedAuditBrand {
+  const name = data.brandName?.trim();
+  const raw = data.brandLogoSrc?.trim();
+  let logoSrc = DEFAULT_BRAND_LOGO_SRC;
+  if (raw) {
+    if (/^https?:\/\//i.test(raw) || raw.startsWith("//")) {
+      logoSrc = raw;
+    } else {
+      logoSrc = raw.startsWith("/") ? raw : `/${raw}`;
+    }
+  }
+  return {
+    name: name || DEFAULT_BRAND_NAME,
+    logoSrc,
+  };
+}
+
+function BrandLogoImage({
+  src,
+  alt,
+  className,
+  width,
+  height,
+  priority,
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+  width: number;
+  height: number;
+  priority?: boolean;
+}) {
+  if (/^(https?:)?\/\//i.test(src)) {
+    return (
+      <img
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        className={className}
+      />
+    );
+  }
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      className={className}
+      priority={priority}
+    />
+  );
+}
+
 const STATUS_COLORS: Record<StatKey, string> = {
   total: "#2D3A53",
   critical: "#d94d43",
@@ -368,44 +428,51 @@ const SEVERITY_DOT_COLORS: Record<string, string> = {
   Critical: STATUS_COLORS.critical,
   Medium: STATUS_COLORS.medium,
   Minor: STATUS_COLORS.minor,
+  Resolved: STATUS_COLORS.resolved,
 };
 
 function SeverityBadge({ children }: { children: string }) {
   const dotColor = SEVERITY_DOT_COLORS[children] ?? STATUS_COLORS.minor;
   return (
     <div className="flex items-center gap-1">
-      <span className="mr-1 inline-block h-2.5 w-2.5 shrink-0 rounded-full bg-[#FFA938] shadow-[0_0_0_1px_rgba(255,255,255,0.4)_inset]" />
+      <span
+        className="mr-1 inline-block h-2.5 w-2.5 shrink-0 rounded-full shadow-[0_0_0_1px_rgba(255,255,255,0.4)_inset]"
+        style={{ backgroundColor: dotColor }}
+      />
       <Badge
         className="h-7 rounded-md border border-[#c9a855]/60 bg-[linear-gradient(180deg,#FFC863_0%,#E5921E_100%)] px-3 text-[13px] font-medium text-[#4a3800] shadow-[0_1px_0_rgba(255,255,255,0.5)_inset]"
       >
-
         {children}
       </Badge>
     </div>
   );
 }
 
-function StatusBadge() {
+function StatusBadge({ children }: { children: string }) {
   return (
     <Badge className="h-8 rounded-[8px] border bg-[linear-gradient(180deg,#2a4a7a_0%,#0E2857_100%)] px-4 text-[13px] font-bold text-white">
-      Acknowledged
+      {children}
     </Badge>
   );
 }
 
-function MinorPillBadge() {
+function FindingSummarySeverityPill({ severity }: { severity: string }) {
+  const dotColor = SEVERITY_DOT_COLORS[severity] ?? STATUS_COLORS.minor;
   return (
     <Badge className="h-7 rounded-md border-0 bg-[linear-gradient(180deg,#2a4a7a_0%,#0E2857_100%)] px-3 text-[13px] font-medium text-white">
-      <span className="bg-[#3d8fe8] w-3 h-3 shrink-0 rounded-full mr-1"></span>
-      Minor
+      <span
+        className="mr-1 h-3 w-3 shrink-0 rounded-full"
+        style={{ backgroundColor: dotColor }}
+      />
+      {severity}
     </Badge>
   );
 }
 
-function AcknowledgedPillBadge() {
+function FindingStatusPill({ status }: { status: string }) {
   return (
     <Badge className="h-7 rounded-md border-0 bg-[linear-gradient(180deg,#2a4a7a_0%,#0E2857_100%)] px-3 text-[13px] font-bold text-white">
-      Acknowledged
+      {status}
     </Badge>
   );
 }
@@ -436,7 +503,9 @@ function FindingsTable({ issues }: { issues: AuditReport["issues"] }) {
               <TableCell className="px-2 py-1 text-[14px] text-white">{issue.id}</TableCell>
               <TableCell className="px-2 py-1 text-[14px] text-white">{issue.title}</TableCell>
               <TableCell className="px-2 py-1 text-right">
-                <StatusBadge />
+                <StatusBadge>
+                  {issue.status ?? "Acknowledged"}
+                </StatusBadge>
               </TableCell>
             </TableRow>
           ))}
@@ -476,14 +545,20 @@ function FindingsBreakdown({ data }: { data: AuditReport }) {
 
           <div className="min-w-0 rounded-[14px] border border-[#4a5a75]/50 bg-[#0A1329] p-4 backdrop-blur-sm sm:p-6">
             <p className="mb-3 text-base font-semibold text-white">Audit Findings</p>
-            <div className="space-y-0">
-              {data.issues.slice(0, 2).map((issue) => (
+            <div
+              className="max-h-25 space-y-0 overflow-y-auto overscroll-y-contain pr-1 [-webkit-overflow-scrolling:touch] [scrollbar-gutter:stable]"
+              role="region"
+              aria-label="Audit findings summary list"
+            >
+              {data.issues.map((issue) => (
                 <div
                   key={issue.id}
-                  className="flex items-start gap-2 border-b border-[#4a5a75]/40 px-0 py-2 hover:bg-[rgba(30,45,70,0.4)] flex-row sm:items-center justify-between"
+                  className="flex items-start gap-2 border-b border-[#4a5a75]/40 px-0 py-2 last:border-b-0 hover:bg-[rgba(30,45,70,0.4)] flex-row sm:items-center justify-between"
                 >
-                  <MinorPillBadge />
-                  <AcknowledgedPillBadge />
+                  <FindingSummarySeverityPill severity={issue.severity} />
+                  <FindingStatusPill
+                    status={issue.status ?? "Acknowledged"}
+                  />
                 </div>
               ))}
             </div>
@@ -1797,19 +1872,37 @@ const PROJECT_ICON_MAP: Record<string, ComponentType<{ className?: string }>> = 
 function ProjectActionButton({
   label,
   icon: iconName,
+  href,
 }: {
   label: string;
   icon?: string;
+  href?: string;
 }) {
   const ResolvedIcon = (iconName ? PROJECT_ICON_MAP[iconName] : undefined) ?? Globe;
-  return (
-    <Button
-      type="button"
-      variant="ghost"
-      className="h-11 rounded-[12px] border border-[#33476e]/55 bg-[linear-gradient(180deg,rgba(9,16,36,0.86)_0%,rgba(5,10,24,0.78)_100%)] px-4 text-[16px] font-medium text-white/88 shadow-[0_1px_0_rgba(255,255,255,0.08)_inset] hover:bg-[linear-gradient(180deg,rgba(14,22,46,0.9)_0%,rgba(8,14,30,0.84)_100%)]"
-    >
+  const className =
+    "inline-flex h-11 items-center rounded-[12px] border border-[#33476e]/55 bg-[linear-gradient(180deg,rgba(9,16,36,0.86)_0%,rgba(5,10,24,0.78)_100%)] px-4 text-[16px] font-medium text-white/88 shadow-[0_1px_0_rgba(255,255,255,0.08)_inset] transition-colors hover:bg-[linear-gradient(180deg,rgba(14,22,46,0.9)_0%,rgba(8,14,30,0.84)_100%)]";
+  const content = (
+    <>
       <ResolvedIcon className="mr-2 size-4.5 text-[#74c6ff]" />
       {label}
+    </>
+  );
+  const url = href?.trim();
+  if (url) {
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={className}
+      >
+        {content}
+      </a>
+    );
+  }
+  return (
+    <Button type="button" variant="ghost" className={className}>
+      {content}
     </Button>
   );
 }
@@ -1838,7 +1931,13 @@ function ProjectFeatureBadge({
   );
 }
 
-function ProjectOverviewSection({ data }: { data: AuditReport }) {
+function ProjectOverviewSection({
+  data,
+  brand,
+}: {
+  data: AuditReport;
+  brand: ResolvedAuditBrand;
+}) {
   const overview = data.projectOverview;
   return (
     <Card className={cn("relative overflow-hidden bg-[#050d1e] py-0 border-[#33476e]/80 gap-0")}>
@@ -1865,8 +1964,11 @@ function ProjectOverviewSection({ data }: { data: AuditReport }) {
             </div>
 
             <div className="mt-5 flex flex-wrap gap-3">
-              {overview.actions.map((action) => (
-                <ProjectActionButton key={action.label} {...action} />
+              {overview.actions.map((action, i) => (
+                <ProjectActionButton
+                  key={`${i}-${action.label}`}
+                  {...action}
+                />
               ))}
             </div>
 
@@ -1890,16 +1992,16 @@ function ProjectOverviewSection({ data }: { data: AuditReport }) {
 
           <div className="rounded-[18px] border border-[#33476e]/55 bg-[linear-gradient(180deg,rgba(7,13,29,0.45)_0%,rgba(7,13,29,0.22)_100%)] p-5">
             <div className="flex h-full flex-col items-center justify-center text-center">
-              <Image
-                src="/images/logo.svg"
-                alt="Odicyber"
+              <BrandLogoImage
+                src={brand.logoSrc}
+                alt={brand.name}
                 width={220}
                 height={220}
                 className="h-auto w-[180px] filter-[drop-shadow(0_0_30px_rgba(80,150,255,0.35))] sm:w-[220px]"
               />
 
               <div className="mt-4 text-[34px] font-semibold tracking-[-0.05em] text-[#7fc7ff] sm:text-[40px]">
-                ODICYBER
+                {brand.name}
               </div>
 
               <div className="mt-6 inline-flex items-center gap-3 rounded-[14px] border border-[#3b5fa0]/60 bg-[linear-gradient(180deg,rgba(14,30,64,0.95)_0%,rgba(8,18,40,0.92)_100%)] px-5 py-3 text-left shadow-[0_0_24px_rgba(62,138,255,0.18),0_1px_0_rgba(255,255,255,0.08)_inset]">
@@ -1911,7 +2013,7 @@ function ProjectOverviewSection({ data }: { data: AuditReport }) {
                     {overview.verifiedLabel}
                   </div>
                   <div className="text-[12px] tracking-[0.18em] text-[#6fc2ff] uppercase">
-                    ODICYBER
+                    {brand.name}
                   </div>
                 </div>
               </div>
@@ -1928,6 +2030,7 @@ export interface AuditSummaryProps {
 }
 
 export function AuditSummary({ data = defaultAuditReport }: AuditSummaryProps) {
+  const brand = resolveAuditBrand(data);
   return (
     <main className="max-w-6xl mx-auto relative isolate min-h-screen overflow-hidden bg-[linear-gradient(180deg,#0a1525_0%,#0d1b2e_30%,#0a1525_100%)]">
       {/* Radial gradient - lighter at top center */}
@@ -1951,8 +2054,8 @@ export function AuditSummary({ data = defaultAuditReport }: AuditSummaryProps) {
       <div className="relative mx-auto max-w-7xl px-5 pt-6 pb-12 sm:px-8">
         <header className="flex flex-col items-center">
           <div className="relative">
-            <Image
-              src="/images/logo.svg"
+            <BrandLogoImage
+              src={brand.logoSrc}
               alt=""
               width={183}
               height={164}
@@ -1967,7 +2070,7 @@ export function AuditSummary({ data = defaultAuditReport }: AuditSummaryProps) {
               textShadow: "0 0 24px rgba(100,180,255,0.7)",
             }}
           >
-            ODICYBER
+            {brand.name}
           </h1>
           <div className="mt-1 flex items-center gap-3">
             <div className="h-px w-8 bg-white/30" />
@@ -2025,7 +2128,7 @@ export function AuditSummary({ data = defaultAuditReport }: AuditSummaryProps) {
         </section>
 
         <section className="mt-4">
-          <ProjectOverviewSection data={data} />
+          <ProjectOverviewSection data={data} brand={brand} />
         </section>
       </div>
     </main>

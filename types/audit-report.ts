@@ -17,6 +17,8 @@ export interface Issue {
   id: string;
   title: string;
   severity: string;
+  /** Workflow state shown in findings summary and table (e.g. Acknowledged). */
+  status?: string;
 }
 
 export interface DetailRow {
@@ -224,6 +226,8 @@ export interface ProjectAction {
   label: string;
   /** Icon name resolvable via PROJECT_ICON_MAP (e.g. "Globe", "Link2"). Must be serializable for Server → Client. */
   icon: string;
+  /** External URL for social / project links (opens in a new tab). Empty = display only (no link). */
+  href?: string;
 }
 
 export interface ProjectOverview {
@@ -243,6 +247,13 @@ export interface ProjectOverview {
  * for each row in the `audit_reports` table.
  */
 export interface AuditReport {
+  /** Shown in the audit page header and project overview panel. */
+  brandName?: string;
+  /**
+   * Logo image: path served from /public (e.g. /images/logo.svg) or https URL.
+   */
+  brandLogoSrc?: string;
+
   // Summary section
   summaryCards: SummaryCard[];
   legendItems: LegendItem[];

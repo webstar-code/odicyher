@@ -1,31 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 
+import { verifyAdminBasicAuth } from "@/lib/admin-auth";
 import { getAuditReportBySlugForAdmin } from "@/lib/audit-reports-repository";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import type { AuditReport, AuditReportStatus } from "@/types/audit-report";
-
-function verifyAdminAuth(authHeader: string | null): boolean {
-  const username = process.env.ADMIN_USERNAME ?? "admin";
-  const password =
-    process.env.ADMIN_SECRET ?? process.env.ADMIN_PASSWORD ?? "";
-  if (!password || !authHeader?.startsWith("Basic ")) return false;
-  try {
-    const base64 = authHeader.slice(6);
-    const decoded = Buffer.from(base64, "base64").toString("utf-8");
-    const [user, pass] = decoded.split(":", 2);
-    return user === username && pass === password;
-  } catch {
-    return false;
-  }
-}
 
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const authHeader = _request.headers.get("Authorization");
-  if (!verifyAdminAuth(authHeader)) {
+  if (!verifyAdminBasicAuth(authHeader)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -44,7 +30,7 @@ export async function PUT(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const authHeader = request.headers.get("Authorization");
-  if (!verifyAdminAuth(authHeader)) {
+  if (!verifyAdminBasicAuth(authHeader)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
