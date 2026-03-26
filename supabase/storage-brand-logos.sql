@@ -1,5 +1,6 @@
--- Brand logo uploads (Supabase Storage).
--- Public bucket so audit pages can load logos via URL in audit_reports.content (brandLogoSrc).
+-- Brand logos and audit PDFs (Supabase Storage).
+-- Public bucket so audit pages can load assets via URL in audit_reports.content
+-- (brandLogoSrc, fullReportPdfSrc). Logos: {slug}/{uuid}.ext ; PDFs: {slug}/reports/{uuid}.pdf
 --
 -- Option A — Dashboard: Storage → bucket id `assets` → enable "Public bucket".
 --

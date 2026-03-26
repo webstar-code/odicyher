@@ -254,6 +254,12 @@ export interface AuditReport {
    */
   brandLogoSrc?: string;
 
+  /**
+   * Public URL of the full audit report PDF (e.g. Supabase Storage).
+   * Powers “Download Full Report (PDF)” on the public audit page.
+   */
+  fullReportPdfSrc?: string;
+
   // Summary section
   summaryCards: SummaryCard[];
   legendItems: LegendItem[];

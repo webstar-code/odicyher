@@ -17,7 +17,7 @@ export default async function AuditPage({ params }: AuditPageProps) {
 
   return (
     <main className="min-h-screen overflow-hidden bg-[linear-gradient(180deg,#0a1525_0%,#0d1b2e_30%,#0a1525_100%)]">
-      <AuditSummary data={record.content} />
+      <AuditSummary data={record.content} reportSlug={slug} />
     </main>
   );
 }

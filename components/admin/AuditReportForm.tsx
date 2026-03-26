@@ -187,6 +187,9 @@ export function AuditReportForm({
           <AuditDetailsSectionForm
             detailRows={formData.detailRows}
             onChange={(detailRows) => updateSection({ detailRows })}
+            fullReportPdfSrc={formData.fullReportPdfSrc ?? ""}
+            reportSlug={normalizeSlug(slug) || baselineRecord.slug}
+            onPdfSrcChange={(url) => updateSection({ fullReportPdfSrc: url })}
           />
         )}
         {activeTab === "burned-lockers" && (

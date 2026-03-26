@@ -29,6 +29,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { parseSupabasePublicObjectUrl } from "@/lib/supabase-storage-path";
 import { cn } from "@/lib/utils";
 import type { AuditReport, StatKey } from "@/types/audit-report";
 import { defaultAuditReport } from "@/lib/default-audit-report";
@@ -585,7 +586,35 @@ function DetailRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-function AuditDetailsCard({ data }: { data: AuditReport }) {
+const auditPdfDownloadButtonClass =
+  "h-14 w-full justify-start rounded-[12px] border-0 bg-[linear-gradient(180deg,#2a4a7a_0%,#0E2857_100%)] px-4 text-base font-bold text-white shadow-[0_8px_24px_rgba(30,60,120,0.4)] hover:bg-[linear-gradient(180deg,#325a8a_0%,#224068_100%)]";
+
+function AuditDetailsCard({
+  data,
+  reportSlug,
+}: {
+  data: AuditReport;
+  reportSlug?: string;
+}) {
+  const pdfUrl = data.fullReportPdfSrc?.trim();
+  const downloadName = reportSlug
+    ? `${reportSlug}-audit-report.pdf`
+    : "audit-report.pdf";
+
+  const supabaseBase = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
+  let pdfHref: string | undefined;
+  if (pdfUrl) {
+    if (
+      reportSlug &&
+      supabaseBase &&
+      parseSupabasePublicObjectUrl(pdfUrl, supabaseBase)
+    ) {
+      pdfHref = `/api/public/audit-report-pdf/${encodeURIComponent(reportSlug)}`;
+    } else {
+      pdfHref = pdfUrl;
+    }
+  }
+
   return (
     <Card className={cn("bg-[#0A1329]", "py-0 border-[#4a5a75]/70")}>
       <CardHeader className="px-4 pt-4 pb-3 sm:px-5">
@@ -600,12 +629,29 @@ function AuditDetailsCard({ data }: { data: AuditReport }) {
           ))}
         </div>
 
-        <Button
-          className="h-14 w-full justify-start rounded-[12px] border-0 bg-[linear-gradient(180deg,#2a4a7a_0%,#0E2857_100%)] px-4 text-base font-bold text-white shadow-[0_8px_24px_rgba(30,60,120,0.4)] hover:bg-[linear-gradient(180deg,#325a8a_0%,#224068_100%)]"
-        >
-          <Download className="mr-2 size-5" />
-          Download Full Report (PDF)
-        </Button>
+        {pdfHref ? (
+          <Button asChild className={auditPdfDownloadButtonClass}>
+            <a
+              href={pdfHref}
+              download={downloadName}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Download className="mr-2 size-5" />
+              Download Full Report (PDF)
+            </a>
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            disabled
+            className={cn(auditPdfDownloadButtonClass, "cursor-not-allowed opacity-45")}
+            title="Full PDF has not been uploaded for this report"
+          >
+            <Download className="mr-2 size-5" />
+            Download Full Report (PDF)
+          </Button>
+        )}
       </CardContent>
     </Card>
   );
@@ -2027,9 +2073,14 @@ function ProjectOverviewSection({
 
 export interface AuditSummaryProps {
   data?: AuditReport;
+  /** Used for the PDF download filename on the public audit page. */
+  reportSlug?: string;
 }
 
-export function AuditSummary({ data = defaultAuditReport }: AuditSummaryProps) {
+export function AuditSummary({
+  data = defaultAuditReport,
+  reportSlug,
+}: AuditSummaryProps) {
   const brand = resolveAuditBrand(data);
   return (
     <main className="max-w-6xl mx-auto relative isolate min-h-screen overflow-hidden bg-[linear-gradient(180deg,#0a1525_0%,#0d1b2e_30%,#0a1525_100%)]">
@@ -2092,7 +2143,7 @@ export function AuditSummary({ data = defaultAuditReport }: AuditSummaryProps) {
 
         <section className="mt-4 flex flex-col gap-4 md:grid lg:grid-cols-[minmax(0,1fr)_364px]">
           <FindingsBreakdown data={data} />
-          <AuditDetailsCard data={data} />
+          <AuditDetailsCard data={data} reportSlug={reportSlug} />
         </section>
 
         <section className="mt-4">
