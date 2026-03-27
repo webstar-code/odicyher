@@ -118,9 +118,6 @@ const statCardGradients: Record<StatKey, string> = {
     "linear-gradient(180deg, rgba(250,255,252,0.96) 0%, rgba(240,249,243,0.98) 100%), radial-gradient(circle at 16% 20%, rgba(29,165,100,0.30), transparent 40%)",
 };
 
-const darkPanelClassName =
-  "rounded-[18px] border border-[#b8a078]/60 bg-[rgba(30,40,65,0.75)] shadow-[0_10px_40px_rgba(0,0,0,0.35)] backdrop-blur-sm";
-
 type MetricItem = AuditReport["burnedAmountMetrics"]["tokens"][number];
 
 const COMPACT_NUMBER_MULTIPLIERS: Record<string, number> = {
