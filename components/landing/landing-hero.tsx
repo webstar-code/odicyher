@@ -96,14 +96,18 @@ export function LandingHero() {
           </div>
         </div>
 
-        <div className="w-full h-full relative lg:pl-4">
+        <div className="relative mt-10 w-full min-h-0 lg:mt-0 lg:pl-4">
           <div
-            className="absolute mx-auto w-full max-w-5xl lg:mx-0 lg:max-w-none"
-            // style={{ perspective: "1200px" }}
+            className="relative mx-auto w-full max-w-2xl lg:mx-0 lg:max-w-none"
+            style={{ perspective: "1200px" }}
           >
-            <div className="w-full h-full max-md:transform-none md:transform-[rotateY(-6deg)_rotateX(4deg)]">
+            <div className="relative max-md:transform-none md:transform-[rotateY(-6deg)_rotateX(4deg)]">
               <div
-                className="pointer-events-none absolute -inset-3 -z-10 opacity-70 blur-2xl"
+                className="pointer-events-none absolute -inset-3 -z-10 rounded-3xl opacity-70 blur-2xl"
+                style={{
+                  background:
+                    "radial-gradient(ellipse 70% 60% at 50% 40%, rgba(34,211,238,0.25), transparent 65%)",
+                }}
                 aria-hidden
               />
               <Image
@@ -111,8 +115,8 @@ export function LandingHero() {
                 alt="ODICYBER smart contract audit summary dashboard preview"
                 width={HERO_IMAGE_WIDTH}
                 height={HERO_IMAGE_HEIGHT}
-                className="h-full w-full rounded-2xl object-cover"
-                sizes="(max-width: 1024px) min(100vw - 2rem, 640px), 50vw"
+                className="relative z-1 h-auto w-full rounded-2xl border border-cyan-400/25 object-contain shadow-[0_0_48px_rgba(34,211,238,0.15),0_24px_48px_rgba(0,0,0,0.35)] md:object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 priority
               />
             </div>

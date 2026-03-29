@@ -1,3 +1,4 @@
+import { LANDING_PRIMARY_CTA_BUTTON } from "@/components/landing/landing-cta-classes";
 import { Quote, ShieldCheck, Star } from "lucide-react";
 import Link from "next/link";
 
@@ -80,10 +81,7 @@ export function TestimonialsCta() {
         </div>
 
         <div className="flex lg:col-span-5">
-          <div
-            id="pricing"
-            className="flex w-full scroll-mt-20 flex-col justify-center rounded-2xl border-2 border-cyan-400/40 bg-[#010D23]/80 p-8 shadow-[0_0_40px_rgba(34,211,238,0.12),inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-sm sm:p-10"
-          >
+          <div className="flex w-full flex-col justify-center rounded-2xl border-2 border-cyan-400/40 bg-[#010D23]/80 p-8 shadow-[0_0_40px_rgba(34,211,238,0.12),inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-sm sm:p-10">
             <h3 className="text-center text-xl font-bold text-white sm:text-2xl">
               Ready To Secure Your Project?
             </h3>
@@ -93,7 +91,7 @@ export function TestimonialsCta() {
             </p>
             <Link
               href="#contact"
-              className="mt-8 inline-flex items-center justify-center gap-2 rounded-xl bg-linear-to-b from-[#0C6ACD] to-[#01267E] px-6 py-3.5 text-base font-semibold text-white shadow-[0_0_32px_rgba(34,211,238,0.35)] transition-[transform,box-shadow] hover:shadow-[0_0_40px_rgba(34,211,238,0.5)] active:scale-[0.99]"
+              className={`${LANDING_PRIMARY_CTA_BUTTON} mt-8 px-6 py-3.5 text-base`}
             >
               <ShieldCheck className="size-5 shrink-0 text-white" aria-hidden />
               Request Audit Now

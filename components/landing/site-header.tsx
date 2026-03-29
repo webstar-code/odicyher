@@ -13,12 +13,12 @@ const nav = [
 export function SiteHeader() {
   return (
     <header className="relative z-20 border-b border-cyan-500/10 bg-[#000616] backdrop-blur-md">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-w-0 max-w-7xl items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-6 sm:py-4 lg:px-8">
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-3 transition-opacity hover:opacity-90"
+          className="flex min-w-0 flex-1 items-center gap-2 transition-opacity hover:opacity-90 sm:flex-initial sm:gap-3"
         >
-          <div className="relative size-11 shrink-0 overflow-hidden rounded-lg shadow-[0_0_24px_rgba(56,189,248,0.25)] ring-1 ring-cyan-400/30">
+          <div className="relative size-9 shrink-0 overflow-hidden rounded-lg shadow-[0_0_24px_rgba(56,189,248,0.25)] ring-1 ring-cyan-400/30 sm:size-11">
             <Image
               src="/images/logo.svg"
               alt="ODICYBER"
@@ -29,10 +29,10 @@ export function SiteHeader() {
             />
           </div>
           <div className="min-w-0 text-left leading-tight">
-            <span className="block font-semibold tracking-wide text-white">
+            <span className="block truncate text-sm font-semibold tracking-wide text-white sm:text-base">
               ODICYBER
             </span>
-            <span className="block text-[10px] font-medium uppercase tracking-[0.2em] text-slate-400 sm:text-[11px]">
+            <span className="hidden text-[10px] font-medium uppercase tracking-[0.2em] text-slate-400 sm:block sm:text-[11px]">
               Blockchain Security &amp; Audit
             </span>
           </div>
@@ -66,10 +66,10 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <div className="flex shrink-0 items-center gap-3">
+        <div className="flex shrink-0 items-center">
           <Link
             href="#contact"
-            className="rounded-sm bg-linear-to-b from-[#0C6ACD] to-[#01267E] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_24px_rgba(34,211,238,0.35)] transition-[transform,box-shadow] hover:shadow-[0_0_32px_rgba(34,211,238,0.5)] active:scale-[0.98] sm:px-5"
+            className="whitespace-nowrap rounded-sm bg-linear-to-b from-[#0C6ACD] to-[#01267E] px-2.5 py-2 text-xs font-semibold text-white shadow-[0_0_24px_rgba(34,211,238,0.35)] transition-[transform,box-shadow] hover:shadow-[0_0_32px_rgba(34,211,238,0.5)] active:scale-[0.98] sm:px-5 sm:py-2.5 sm:text-sm"
           >
             Request Audit
           </Link>

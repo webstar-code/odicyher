@@ -39,7 +39,7 @@ function FeatureCard({
   return (
     <article className="group flex min-h-18 items-center gap-3 rounded-2xl border border-cyan-500/15 bg-[#010D23]/80 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-sm transition-[border-color,box-shadow] hover:border-cyan-400/30 hover:shadow-[0_0_28px_rgba(34,211,238,0.08)] sm:gap-3.5 sm:p-4">
       <div
-        className="flex size-14 shrink-0 items-center justify-center rounded-xlshadow-[0_0_20px_rgba(34,211,238,0.15),inset_0_1px_0_rgba(255,255,255,0.06)]"
+        className="flex size-14 shrink-0 items-center justify-center rounded-xl border border-cyan-400/25 bg-cyan-500/5 shadow-[0_0_20px_rgba(34,211,238,0.15),inset_0_1px_0_rgba(255,255,255,0.06)]"
         aria-hidden
       >
         <Image
