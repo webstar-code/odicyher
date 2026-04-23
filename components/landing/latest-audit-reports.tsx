@@ -4,14 +4,13 @@ import Link from "next/link";
 
 import { LANDING_PRIMARY_CTA_BUTTON } from "@/components/landing/landing-cta-classes";
 
-/**
- * Project icons: public/images/landing/reports/oxyfi.svg, etherswap.svg, lunashield.svg
- */
+/** Default brand mark — same as published audit reports (`/images/logo.svg`). */
+const DEFAULT_BRAND_LOGO_SRC = "/images/logo.svg";
+
 const REPORTS: {
   title: string;
   subtitle?: string;
   bullets: string[];
-  iconSrc: string;
   pdfHref: string;
 }[] = [
   {
@@ -22,7 +21,6 @@ const REPORTS: {
       "Auto Scan",
       "Detailed Audit",
     ],
-    iconSrc: "/images/landing/reports/oxyfi.svg",
     pdfHref: "/sample-report",
   },
   {
@@ -33,7 +31,6 @@ const REPORTS: {
       "Detailed Report",
       "Free Re-Audit (BETA)",
     ],
-    iconSrc: "/images/landing/reports/etherswap.svg",
     pdfHref: "/sample-report",
   },
   {
@@ -45,7 +42,6 @@ const REPORTS: {
       "Detailed Report",
       "Free Re-Audit (BETA)",
     ],
-    iconSrc: "/images/landing/reports/lunashield.svg",
     pdfHref: "/sample-report",
   },
 ];
@@ -56,7 +52,6 @@ function ReportCard({
   title,
   subtitle,
   bullets,
-  iconSrc,
   pdfHref,
 }: (typeof REPORTS)[number]) {
   return (
@@ -72,7 +67,7 @@ function ReportCard({
             aria-hidden
           >
             <Image
-              src={iconSrc}
+              src={DEFAULT_BRAND_LOGO_SRC}
               alt=""
               width={ICON}
               height={ICON}

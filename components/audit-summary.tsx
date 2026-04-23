@@ -2038,16 +2038,12 @@ function ProjectOverviewSection({
               <BrandLogoImage
                 src={brand.logoSrc}
                 alt={brand.name}
-                width={220}
-                height={220}
-                className="h-auto w-[180px] filter-[drop-shadow(0_0_30px_rgba(80,150,255,0.35))] sm:w-[220px]"
+                width={320}
+                height={287}
+                className="h-auto w-[220px] max-w-full filter-[drop-shadow(0_0_30px_rgba(80,150,255,0.35))] sm:w-[280px]"
               />
 
-              <div className="mt-4 text-[34px] font-semibold tracking-[-0.05em] text-[#7fc7ff] sm:text-[40px]">
-                {brand.name}
-              </div>
-
-              <div className="mt-6 inline-flex items-center gap-3 rounded-[14px] border border-[#3b5fa0]/60 bg-[linear-gradient(180deg,rgba(14,30,64,0.95)_0%,rgba(8,18,40,0.92)_100%)] px-5 py-3 text-left shadow-[0_0_24px_rgba(62,138,255,0.18),0_1px_0_rgba(255,255,255,0.08)_inset]">
+              <div className="mt-8 inline-flex items-center gap-3 rounded-[14px] border border-[#3b5fa0]/60 bg-[linear-gradient(180deg,rgba(14,30,64,0.95)_0%,rgba(8,18,40,0.92)_100%)] px-5 py-3 text-left shadow-[0_0_24px_rgba(62,138,255,0.18),0_1px_0_rgba(255,255,255,0.08)_inset]">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[radial-gradient(circle_at_50%_20%,rgba(98,178,255,0.25),rgba(12,22,48,0.92)_72%)] text-[#8ec9ff]">
                   <Shield className="size-5" />
                 </div>
@@ -2097,30 +2093,21 @@ export function AuditSummary({
       {/* Glowing streaks around logo area */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[280px] bg-[radial-gradient(ellipse_60%_80%_at_50%_20%,rgba(80,150,255,0.15),transparent_60%)]" />
       {/* Divider under header */}
-      <div className="pointer-events-none absolute inset-x-0 top-[200px] h-px bg-[linear-gradient(90deg,transparent,rgba(180,200,255,0.3),transparent)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-[280px] h-px bg-[linear-gradient(90deg,transparent,rgba(180,200,255,0.3),transparent)] sm:top-[340px]" />
 
       <div className="relative mx-auto max-w-7xl px-5 pt-6 pb-12 sm:px-8">
         <header className="flex flex-col items-center">
           <div className="relative">
             <BrandLogoImage
               src={brand.logoSrc}
-              alt=""
+              alt={brand.name}
               width={183}
               height={164}
               priority
-              className="h-auto w-[200px] sm:w-[164px] filter-[drop-shadow(0_0_20px_rgba(80,150,255,0.6))]"
+              className="h-auto w-[240px] max-w-[min(92vw,320px)] sm:w-[280px] filter-[drop-shadow(0_0_20px_rgba(80,150,255,0.6))]"
             />
           </div>
-          <h1
-            className="mt-2 text-center text-[22px] font-bold tracking-tight sm:text-[24px]"
-            style={{
-              color: "#7eb8ff",
-              textShadow: "0 0 24px rgba(100,180,255,0.7)",
-            }}
-          >
-            {brand.name}
-          </h1>
-          <div className="mt-1 flex items-center gap-3">
+          <div className="mb-5 flex items-center gap-3 pb-4">
             <div className="h-px w-8 bg-white/30" />
             <p className="text-center text-[12px] font-medium uppercase tracking-[0.2em] text-white/80 sm:text-[13px]">
               Blockchain Security & Audit

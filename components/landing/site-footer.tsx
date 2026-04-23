@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Linkedin, Mail, Send } from "lucide-react";
+import { Coins, Github, Instagram, Mail, Send, Youtube } from "lucide-react";
 
 function XIcon({ className }: { className?: string }) {
   return (
@@ -32,19 +32,34 @@ const legalLinks = [
 
 const social = [
   {
-    href: "https://t.me/",
+    href: "https://t.me/Odicyber",
     label: "Telegram",
     icon: Send,
   },
   {
-    href: "https://twitter.com/",
+    href: "https://coinmarketcap.com/community/profile/OdiCyber/",
+    label: "CoinMarketCap",
+    icon: Coins,
+  },
+  {
+    href: "https://github.com/odicyber",
+    label: "GitHub",
+    icon: Github,
+  },
+  {
+    href: "https://www.instagram.com/odicyber/",
+    label: "Instagram",
+    icon: Instagram,
+  },
+  {
+    href: "https://x.com/OdicyberAudit",
     label: "X",
     icon: XIcon,
   },
   {
-    href: "https://linkedin.com/",
-    label: "LinkedIn",
-    icon: Linkedin,
+    href: "https://www.youtube.com/@OdiCyber",
+    label: "YouTube",
+    icon: Youtube,
   },
   {
     href: "mailto:audit@odicyber.com",
@@ -87,18 +102,22 @@ export function SiteFooter() {
               Securing the future of blockchain one contract at a time.
             </p>
             <div className="mt-5 flex flex-wrap gap-2">
-              {social.map(({ href, label, icon: Icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex size-10 items-center justify-center rounded-full border border-cyan-500/25 bg-cyan-500/10 text-cyan-200 transition-colors hover:border-cyan-400/50 hover:bg-cyan-500/20 hover:text-white"
-                  aria-label={label}
-                >
-                  <Icon className="size-[18px]" />
-                </a>
-              ))}
+              {social.map(({ href, label, icon: Icon }) => {
+                const isHttp = href.startsWith("http");
+                return (
+                  <a
+                    key={label}
+                    href={href}
+                    {...(isHttp
+                      ? { target: "_blank", rel: "noopener noreferrer" }
+                      : {})}
+                    className="flex size-10 items-center justify-center rounded-full border border-cyan-500/25 bg-cyan-500/10 text-cyan-200 transition-colors hover:border-cyan-400/50 hover:bg-cyan-500/20 hover:text-white"
+                    aria-label={label}
+                  >
+                    <Icon className="size-[18px]" />
+                  </a>
+                );
+              })}
             </div>
           </div>
 
@@ -152,7 +171,14 @@ export function SiteFooter() {
               <li>
                 <span className="text-[#696E7D]">Telegram</span>
                 <br />
-                <span>@odicyber</span>
+                <a
+                  href="https://t.me/Odicyber"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-cyan-200/90 hover:text-cyan-100"
+                >
+                  @Odicyber
+                </a>
               </li>
               <li>
                 <span className="text-[#696E7D]">WhatsApp</span>
