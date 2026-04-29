@@ -57,7 +57,7 @@ export function AuditProcess() {
           >
             How Our Audit Process Works
           </h2>
-          <p className="mt-3 text-sm text-slate-400 sm:text-base">
+          <p className="mt-3 text-sm text-[#B8C7D9] sm:text-base">
             Our transparent and proven audit methodology.
           </p>
         </header>
@@ -82,9 +82,9 @@ export function AuditProcess() {
                 </div>
               </div>
               <div className="pt-2">
-                <p className="text-base font-medium text-cyan-200/90">
-                  <span className="text-[#696E7D]">{item.step}</span>{". "}
-                  <span className="text-[#696E7D]">{item.label}</span>
+                <p className="text-base font-medium text-[#B8C7D9]">
+                  <span className="text-cyan-200">{item.step}</span>{". "}
+                  <span className="text-[#B8C7D9]">{item.label}</span>
                 </p>
               </div>
             </li>
@@ -112,9 +112,9 @@ export function AuditProcess() {
                     className="object-contain"
                   />
                 </div>
-                <p className="max-w-38 text-sm flex flex-col gap-1 font-medium leading-snug text-slate-300">
-                  <span className="text-[#696E7D]">{item.step}</span>{" "}
-                  <span className="text-[#696E7D]">{item.label}</span>
+                <p className="max-w-38 text-sm flex flex-col gap-1 font-medium leading-snug text-[#B8C7D9]">
+                  <span className="text-cyan-200">{item.step}</span>{" "}
+                  <span className="text-[#B8C7D9]">{item.label}</span>
                 </p>
               </li>
             ))}

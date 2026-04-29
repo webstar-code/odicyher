@@ -104,7 +104,7 @@ export function PricingPlans() {
           >
             Powerful DAPP Security Tools
           </h2>
-          <p className="mt-3 text-sm leading-relaxed text-[#696E7D] sm:text-base">
+          <p className="mt-3 text-sm leading-relaxed text-[#B8C7D9] sm:text-base">
             Pick the depth that matches your launch: from quick scans to full audits and
             ongoing tooling — all with clear deliverables.
           </p>
@@ -116,10 +116,15 @@ export function PricingPlans() {
               key={plan.name}
               className={`flex h-full flex-col rounded-2xl border bg-[#010D23]/90 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-sm sm:p-6 ${
                 plan.highlighted
-                  ? "border-cyan-400/50 shadow-[0_0_40px_rgba(34,211,238,0.2)] ring-1 ring-cyan-400/30"
+                  ? "border-amber-300/70 shadow-[0_0_40px_rgba(251,191,36,0.3)] ring-1 ring-amber-200/40"
                   : "border-cyan-500/15 transition-[border-color,box-shadow] hover:border-cyan-400/25"
               }`}
             >
+              {plan.highlighted ? (
+                <p className="mb-3 text-center text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-300">
+                  Most Popular
+                </p>
+              ) : null}
               <StarRow />
               <h3 className="mt-4 text-center text-lg font-bold text-white">
                 {plan.name}
@@ -136,10 +141,12 @@ export function PricingPlans() {
                 {plan.features.map((line) => (
                   <li
                     key={line}
-                    className="flex gap-2.5 text-left text-xs leading-snug text-[#838997] sm:text-sm"
+                    className="flex gap-2.5 text-left text-xs leading-snug text-[#B8C7D9] sm:text-sm"
                   >
                     <span
-                      className="mt-1.5 size-2 shrink-0 bg-sky-400/90"
+                      className={`mt-1.5 size-2 shrink-0 ${
+                        plan.highlighted ? "bg-amber-300" : "bg-sky-400/90"
+                      }`}
                       aria-hidden
                     />
                     {line}

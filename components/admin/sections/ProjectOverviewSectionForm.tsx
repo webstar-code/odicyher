@@ -106,7 +106,7 @@ function BrandLogoField({
         value={brandLogoSrc}
         onChange={(e) => onBrandingChange({ brandLogoSrc: e.target.value })}
         className={`${inputClass} w-full font-mono text-[11px]`}
-        placeholder="https://… or /images/logo.svg"
+        placeholder="https://… or /images/logo.png"
       />
     </div>
   );

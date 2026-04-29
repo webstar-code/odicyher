@@ -250,7 +250,7 @@ export interface AuditReport {
   /** Shown in the audit page header and project overview panel. */
   brandName?: string;
   /**
-   * Logo image: path served from /public (e.g. /images/logo.svg) or https URL.
+   * Logo image: path served from /public (e.g. /images/logo.png) or https URL.
    */
   brandLogoSrc?: string;
 

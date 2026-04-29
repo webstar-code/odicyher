@@ -293,7 +293,7 @@ export function AuditSummary() {
       <div className="relative mx-auto max-w-7xl px-5 pt-6 pb-12 sm:px-8">
         <header className="flex flex-col items-center">
           <Image
-            src="/images/logo.svg"
+            src="/images/logo.png"
             alt="ODICYBER"
             width={183}
             height={164}

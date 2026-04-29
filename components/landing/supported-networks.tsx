@@ -8,10 +8,10 @@ const CHAINS_ROW1: {
   logoSrc: string;
   variant?: "tron" | "optimism";
 }[] = [
-  { name: "Ethereum", logoSrc: "/images/landing/chains/ethereum.svg" },
-  { name: "BNBCHAIN", logoSrc: "/images/landing/chains/bnb.svg" },
-  { name: "POLYGON", logoSrc: "/images/landing/chains/polygon.svg" },
-  { name: "SOLANA", logoSrc: "/images/landing/chains/solana.svg" },
+  { name: "Ethereum", logoSrc: "/images/landing/chains/ethereum.png" },
+  { name: "BNBCHAIN", logoSrc: "/images/landing/chains/bnb.png" },
+  { name: "POLYGON", logoSrc: "/images/landing/chains/polygon.png" },
+  { name: "SOLANA", logoSrc: "/images/landing/chains/solana.png" },
 ];
 
 const CHAINS_ROW2: {
@@ -19,11 +19,11 @@ const CHAINS_ROW2: {
   logoSrc: string;
   variant?: "tron" | "optimism";
 }[] = [
-  { name: "TRON", logoSrc: "/images/landing/chains/tron.svg", variant: "tron" },
-  { name: "ARBITRUM", logoSrc: "/images/landing/chains/arbitrum.svg" },
+  { name: "TRON", logoSrc: "/images/landing/chains/tron.png", variant: "tron" },
+  { name: "ARBITRUM", logoSrc: "/images/landing/chains/arbitrum.png" },
   {
     name: "OPTIMISM",
-    logoSrc: "/images/landing/chains/optimism.svg",
+    logoSrc: "/images/landing/chains/optimism.png",
     variant: "optimism",
   },
 ];

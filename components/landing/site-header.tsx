@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { DEFAULT_BRAND_LOGO_SRC } from "@/lib/default-brand-logo";
+
 const nav = [
   { href: "/", label: "Home" },
   { href: "#services", label: "Services" },
@@ -18,12 +20,12 @@ export function SiteHeader() {
           href="/"
           className="flex min-w-0 flex-1 items-center gap-2 transition-opacity hover:opacity-90 sm:flex-initial sm:gap-3"
         >
-          <div className="relative size-9 shrink-0 overflow-hidden rounded-lg shadow-[0_0_24px_rgba(56,189,248,0.25)] ring-1 ring-cyan-400/30 sm:size-11">
+          <div className="">
             <Image
-              src="/images/logo.svg"
+              src={DEFAULT_BRAND_LOGO_SRC}
               alt="ODICYBER"
-              width={44}
-              height={44}
+              width={64}
+              height={64}
               className="size-full object-cover"
               priority
             />
@@ -32,7 +34,7 @@ export function SiteHeader() {
             <span className="block truncate text-sm font-semibold tracking-wide text-white sm:text-base">
               ODICYBER
             </span>
-            <span className="hidden text-[10px] font-medium uppercase tracking-[0.2em] text-slate-400 sm:block sm:text-[11px]">
+            <span className="hidden text-[10px] font-medium uppercase tracking-[0.2em] text-[#B8C7D9] sm:block sm:text-[11px]">
               Blockchain Security &amp; Audit
             </span>
           </div>
@@ -51,7 +53,7 @@ export function SiteHeader() {
                 className={`relative px-3 py-2 text-sm font-medium transition-colors ${
                   isHome
                     ? "text-white"
-                    : "text-slate-400 hover:text-cyan-200"
+                    : "text-[#B8C7D9] hover:text-cyan-200"
                 }`}
               >
                 {item.label}
@@ -89,7 +91,7 @@ export function SiteHeader() {
               className={`shrink-0 rounded-md px-3 py-1.5 text-xs font-medium ${
                 isHome
                   ? "bg-cyan-500/15 text-cyan-200 ring-1 ring-cyan-400/30"
-                  : "text-slate-400"
+                  : "text-[#B8C7D9]"
               }`}
             >
               {item.label}

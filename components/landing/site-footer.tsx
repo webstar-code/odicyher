@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Coins, Github, Instagram, Mail, Send, Youtube } from "lucide-react";
 
+import { DEFAULT_BRAND_LOGO_SRC } from "@/lib/default-brand-logo";
+
 function XIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -82,7 +84,7 @@ export function SiteFooter() {
             <Link href="/" className="inline-flex items-center gap-3">
               <div className="relative size-12 shrink-0 overflow-hidden rounded-lg shadow-[0_0_24px_rgba(56,189,248,0.25)] ring-1 ring-cyan-400/30">
                 <Image
-                  src="/images/logo.svg"
+                  src={DEFAULT_BRAND_LOGO_SRC}
                   alt="ODICYBER"
                   width={48}
                   height={48}
@@ -98,7 +100,7 @@ export function SiteFooter() {
                 </span>
               </div>
             </Link>
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-[#696E7D]">
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-[#B8C7D9]">
               Securing the future of blockchain one contract at a time.
             </p>
             <div className="mt-5 flex flex-wrap gap-2">
@@ -122,7 +124,7 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-slate-500">
+            <h3 className="text-sm font-semibold text-[#B8C7D9]">
               Quick Links
             </h3>
             <ul className="mt-4 space-y-2.5">
@@ -130,7 +132,7 @@ export function SiteFooter() {
                 <li key={item.href + item.label}>
                   <Link
                     href={item.href}
-                    className="text-sm text-slate-400 transition-colors hover:text-cyan-200"
+                    className="text-sm text-[#B8C7D9] transition-colors hover:text-cyan-200"
                   >
                     {item.label}
                   </Link>
@@ -140,13 +142,13 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-slate-500">Legal</h3>
+            <h3 className="text-sm font-semibold text-[#B8C7D9]">Legal</h3>
             <ul className="mt-4 space-y-2.5">
               {legalLinks.map((item) => (
                 <li key={item.label}>
                   <Link
                     href={item.href}
-                    className="text-sm text-slate-400 transition-colors hover:text-cyan-200"
+                    className="text-sm text-[#B8C7D9] transition-colors hover:text-cyan-200"
                   >
                     {item.label}
                   </Link>
@@ -156,10 +158,10 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-slate-500">Contact</h3>
-            <ul className="mt-4 space-y-3 text-sm text-slate-400">
+            <h3 className="text-sm font-semibold text-[#B8C7D9]">Contact</h3>
+            <ul className="mt-4 space-y-3 text-sm text-[#B8C7D9]">
               <li>
-                <span className="text-[#696E7D]">Email</span>
+                <span className="text-[#B8C7D9]">Email</span>
                 <br />
                 <a
                   href="mailto:audit@odicyber.com"
@@ -169,7 +171,7 @@ export function SiteFooter() {
                 </a>
               </li>
               <li>
-                <span className="text-[#696E7D]">Telegram</span>
+                <span className="text-[#B8C7D9]">Telegram</span>
                 <br />
                 <a
                   href="https://t.me/Odicyber"
@@ -181,7 +183,7 @@ export function SiteFooter() {
                 </a>
               </li>
               <li>
-                <span className="text-[#696E7D]">WhatsApp</span>
+                <span className="text-[#B8C7D9]">WhatsApp</span>
                 <br />
                 <a
                   href="https://wa.me/15551234567"
@@ -194,7 +196,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <p className="mt-12 border-t border-cyan-500/10 pt-8 text-center text-xs text-[#696E7D]">
+        <p className="mt-12 border-t border-cyan-500/10 pt-8 text-center text-xs text-[#B8C7D9]">
           © {year} ODICYBER, All Rights Reserved.
         </p>
       </div>

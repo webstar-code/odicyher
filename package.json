@@ -2,10 +2,11 @@
   "name": "odicyber",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "build": "next build --webpack",
+    "start": "node server.cjs",
     "lint": "eslint"
   },
   "dependencies": {

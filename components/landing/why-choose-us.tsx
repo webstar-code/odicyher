@@ -109,10 +109,10 @@ function ReasonCard({
         <h3 className="text-base font-bold leading-snug text-white sm:text-lg">
           {title}
         </h3>
-        <p className="mt-2 text-sm leading-relaxed text-[#696E7D]">
+        <p className="mt-2 text-sm leading-relaxed text-[#B8C7D9]">
           {lines[0]}
         </p>
-        <p className="mt-1.5 text-sm leading-relaxed text-[#696E7D]">
+        <p className="mt-1.5 text-sm leading-relaxed text-[#B8C7D9]">
           {lines[1]}
         </p>
       </div>
@@ -147,7 +147,7 @@ export function WhyChooseUs() {
           >
             Why Choose Us?
           </h2>
-          <p className="mt-3 text-sm text-[#696E7D] sm:text-base">
+          <p className="mt-3 text-sm text-[#B8C7D9] sm:text-base">
             Key reasons to choose our audit services
           </p>
         </header>

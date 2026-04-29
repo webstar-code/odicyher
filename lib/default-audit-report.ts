@@ -1,8 +1,9 @@
 import { createAuditReport } from "@/lib/audit-report-schema";
+import { DEFAULT_BRAND_LOGO_SRC } from "@/lib/default-brand-logo";
 
 export const defaultAuditReport = createAuditReport({
   brandName: "ODICYBER",
-  brandLogoSrc: "/images/logo.svg",
+  brandLogoSrc: DEFAULT_BRAND_LOGO_SRC,
   summaryCards: [
     { label: "Total Findings", value: 3, icon: "findings", tone: "total" },
     { label: "Critical", value: 0, icon: "critical", tone: "critical" },

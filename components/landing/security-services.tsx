@@ -68,7 +68,7 @@ function ServiceCard({
         <h3 className="text-base font-semibold text-white sm:text-lg">
           {title}
         </h3>
-        <p className="mt-1.5 text-sm leading-relaxed text-slate-400">
+        <p className="mt-1.5 text-sm leading-relaxed text-[#B8C7D9]">
           {description}
         </p>
       </div>
@@ -103,7 +103,7 @@ export function SecurityServices() {
           >
             Our Security Services
           </h2>
-          <p className="mt-3 text-sm text-slate-400 sm:text-base">
+          <p className="mt-3 text-sm text-[#B8C7D9] sm:text-base">
             Comprehensive security solutions for your blockchain project.
           </p>
         </header>

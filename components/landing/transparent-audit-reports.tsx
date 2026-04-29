@@ -69,7 +69,7 @@ export function TransparentAuditReports() {
           >
             Transparent &amp; Detailed Audit Reports
           </h2>
-          <p className="mt-4 text-sm leading-relaxed text-[#696E7D] sm:text-base">
+          <p className="mt-4 text-sm leading-relaxed text-[#B8C7D9] sm:text-base">
             We provide clear, detailed, and transparent reports so you know
             exactly what&apos;s secure and what needs to be fixed.
           </p>
@@ -78,7 +78,7 @@ export function TransparentAuditReports() {
             {REPORT_FEATURES.map((label) => (
               <li key={label} className="flex items-center gap-3">
                 <span
-                  className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#0652B5] shadow-[0_0_12px_rgba(34,211,238,0.2)] ring-1 ring-cyan-400/35"
+                  className="flex size-7 shrink-0 items-center justify-center rounded-full bg-emerald-600 shadow-[0_0_12px_rgba(16,185,129,0.3)] ring-1 ring-emerald-300/35"
                   aria-hidden
                 >
                   <Check
@@ -86,7 +86,7 @@ export function TransparentAuditReports() {
                     strokeWidth={3}
                   />
                 </span>
-                <span className="text-sm font-medium text-slate-200 sm:text-[15px]">
+                <span className="text-sm font-medium text-[#B8C7D9] sm:text-[15px]">
                   {label}
                 </span>
               </li>

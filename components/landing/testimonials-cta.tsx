@@ -66,12 +66,12 @@ export function TestimonialsCta() {
                   strokeWidth={1.5}
                   aria-hidden
                 />
-                <p className="mt-3 flex-1 text-sm leading-relaxed text-slate-300">
+                <p className="mt-3 flex-1 text-sm leading-relaxed text-[#B8C7D9]">
                   {t.quote}
                 </p>
                 <div className="mt-4">
                   <StarRow />
-                  <footer className="mt-3 text-xs text-[#696E7D]">
+                  <footer className="mt-3 text-xs text-[#B8C7D9]">
                     — {t.attribution}
                   </footer>
                 </div>
@@ -85,7 +85,7 @@ export function TestimonialsCta() {
             <h3 className="text-center text-xl font-bold text-white sm:text-2xl">
               Ready To Secure Your Project?
             </h3>
-            <p className="mt-3 text-center text-sm leading-relaxed text-[#696E7D] sm:text-base">
+            <p className="mt-3 text-center text-sm leading-relaxed text-[#B8C7D9] sm:text-base">
               Don&apos;t take risks with your smart contract. Get it audited by
               experts.
             </p>

@@ -35,10 +35,10 @@ export function LandingHero() {
               Smart Contract Audits
             </span>
           </h1>
-          <p className="mt-4 text-lg font-medium text-slate-200 sm:text-xl">
+          <p className="mt-4 text-lg font-medium text-white sm:text-xl">
             Protect Your Project Before Launch
           </p>
-          <p className="mt-2 max-w-xl text-sm text-slate-400 sm:text-base">
+          <p className="mt-2 max-w-xl text-sm text-[#B8C7D9] sm:text-base">
             Get Your Smart Contract Audited by Security Experts.
           </p>
 
@@ -61,14 +61,14 @@ export function LandingHero() {
 
           <div className="mt-10 grid grid-cols-1 divide-y divide-cyan-500/15 rounded-2xl border border-cyan-500/20 bg-white/4 p-4 backdrop-blur-md sm:grid-cols-3 sm:divide-x sm:divide-y-0 sm:p-0">
             <div className="flex items-center gap-3 px-4 py-3 sm:py-4">
-              <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-300 shadow-[0_0_16px_rgba(34,211,238,0.25)]">
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-300 shadow-[0_0_16px_rgba(16,185,129,0.3)]">
                 <ShieldCheck className="size-5" aria-hidden />
               </div>
               <div>
                 <p className="text-xl font-bold tabular-nums text-white sm:text-2xl">
                   100+
                 </p>
-                <p className="text-xs text-slate-500">Audits Completed</p>
+                <p className="text-xs text-[#B8C7D9]">Audits Completed</p>
               </div>
             </div>
             <div className="flex items-center gap-3 px-4 py-3 sm:py-4">
@@ -79,18 +79,18 @@ export function LandingHero() {
                 <p className="text-xl font-bold tabular-nums text-white sm:text-2xl">
                   $50M+
                 </p>
-                <p className="text-xs text-slate-500">Market Cap Secured</p>
+                <p className="text-xs text-[#B8C7D9]">Market Cap Secured</p>
               </div>
             </div>
             <div className="flex items-center gap-3 px-4 py-3 sm:py-4">
-              <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-rose-500/15 text-rose-300 shadow-[0_0_16px_rgba(244,63,94,0.25)]">
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-orange-500/15 text-orange-300 shadow-[0_0_16px_rgba(249,115,22,0.3)]">
                 <Bug className="size-5" aria-hidden />
               </div>
               <div>
                 <p className="text-xl font-bold tabular-nums text-white sm:text-2xl">
                   500+
                 </p>
-                <p className="text-xs text-slate-500">Vulnerabilities Found</p>
+                <p className="text-xs text-[#B8C7D9]">Vulnerabilities Found</p>
               </div>
             </div>
           </div>

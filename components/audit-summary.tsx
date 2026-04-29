@@ -32,10 +32,10 @@ import {
 import { parseSupabasePublicObjectUrl } from "@/lib/supabase-storage-path";
 import { cn } from "@/lib/utils";
 import type { AuditReport, StatKey } from "@/types/audit-report";
+import { DEFAULT_BRAND_LOGO_SRC } from "@/lib/default-brand-logo";
 import { defaultAuditReport } from "@/lib/default-audit-report";
 
 const DEFAULT_BRAND_NAME = "ODICYBER";
-const DEFAULT_BRAND_LOGO_SRC = "/images/logo.svg";
 
 type ResolvedAuditBrand = { name: string; logoSrc: string };
 

@@ -88,7 +88,7 @@ export function AuditSummary() {
       {/* Header */}
       <header className="mb-8 text-center">
         <div className="mb-4 flex justify-center">
-          <Image src="/images/logo.svg" alt="ODICYBER Logo" width={128} height={128} />
+          <Image src="/images/logo.png" alt="ODICYBER Logo" width={128} height={128} />
         </div>
         <h1 className="text-4xl font-bold" style={{ color: "var(--gold-dark)" }}>
           ODICYBER

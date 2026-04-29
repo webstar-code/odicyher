@@ -12,7 +12,6 @@ import { SiteFooter } from "@/components/landing/site-footer";
 import { SiteHeader } from "@/components/landing/site-header";
 import { TestimonialsCta } from "@/components/landing/testimonials-cta";
 import { TrustedBy } from "@/components/landing/trusted-by";
-import { TrustedPartnersIntegrations } from "@/components/landing/trusted-partners-integrations";
 import { WhyChooseUs } from "@/components/landing/why-choose-us";
 
 export default function Home() {
@@ -32,7 +31,6 @@ export default function Home() {
         <SupportedNetworks />
         <LatestAuditReports />
         <WhyChooseUs />
-        <TrustedPartnersIntegrations />
         <MeetOurTeam />
         <AdvancedSecurityCoverage />
         <AdvancedSecurityFeatures />

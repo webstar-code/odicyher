@@ -3,9 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { LANDING_PRIMARY_CTA_BUTTON } from "@/components/landing/landing-cta-classes";
-
-/** Default brand mark — same as published audit reports (`/images/logo.svg`). */
-const DEFAULT_BRAND_LOGO_SRC = "/images/logo.svg";
+import { DEFAULT_BRAND_LOGO_SRC } from "@/lib/default-brand-logo";
 
 const REPORTS: {
   title: string;
@@ -76,9 +74,7 @@ function ReportCard({
           </div>
           <div className="min-w-0 pt-0.5">
             <h3 className="text-lg font-bold text-white">{title}</h3>
-            {subtitle ? (
-              <p className="mt-1 text-sm text-[#696E7D]">{subtitle}</p>
-            ) : null}
+            {subtitle ? <p className="mt-1 text-sm text-[#B8C7D9]">{subtitle}</p> : null}
           </div>
         </div>
 
@@ -86,7 +82,7 @@ function ReportCard({
           {bullets.map((line) => (
             <li
               key={line}
-              className="flex gap-2.5 text-sm leading-snug text-[#838997]"
+              className="flex gap-2.5 text-sm leading-snug text-[#B8C7D9]"
             >
               <span
                 className="mt-2 size-1 shrink-0 rounded-full bg-slate-400/80"
@@ -120,7 +116,7 @@ export function LatestAuditReports() {
           >
             Latest Audit Reports
           </h2>
-          <p className="mt-3 text-sm text-[#696E7D] sm:text-base">
+          <p className="mt-3 text-sm text-[#B8C7D9] sm:text-base">
             Recent blockchain projects we&apos;ve audited
           </p>
         </header>
