@@ -94,7 +94,7 @@ export function TestimonialsCta() {
               className={`${LANDING_PRIMARY_CTA_BUTTON} mt-8 px-6 py-3.5 text-base`}
             >
               <ShieldCheck className="size-5 shrink-0 text-white" aria-hidden />
-              Request Audit Now
+              Submit Contract for Audit
             </Link>
           </div>
         </div>

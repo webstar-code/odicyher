@@ -9,18 +9,18 @@ const REASONS: {
   iconSrc: string;
 }[] = [
   {
-    title: "Fast Audit Delivery (2-5 Days)",
+    title: "⚡ Fast & Reliable Audit Delivery (24-72 hours)",
     lines: [
       "Structured timelines without cutting corners on depth.",
-      "Ideal for launches, listings, and community milestones.",
+      "(based on contract complexity)",
     ],
     iconSrc: "/images/landing/why/1.svg",
   },
   {
-    title: "Free Re-Audit",
+    title: "🔁 Free Re-Audit Included (after vulnerability fixes verification)",
     lines: [
       "We re-check fixes after you patch reported issues.",
-      "Keeps your deployment aligned with the final signed-off scope.",
+      "(after vulnerability fixes verification)",
     ],
     iconSrc: "/images/landing/why/2.svg",
   },

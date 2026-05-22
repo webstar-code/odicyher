@@ -1,4 +1,10 @@
-import { Bug, FileText, Lock, ShieldCheck } from "lucide-react";
+import {
+  FileText,
+  RefreshCcw,
+  Shield,
+  ShieldCheck,
+  Zap,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -36,61 +42,53 @@ export function LandingHero() {
             </span>
           </h1>
           <p className="mt-4 text-lg font-medium text-white sm:text-xl">
-            Protect Your Project Before Launch
+            Secure Your Smart Contract Before Mainnet Deployment
           </p>
           <p className="mt-2 max-w-xl text-sm text-[#B8C7D9] sm:text-base">
             Get Your Smart Contract Audited by Security Experts.
           </p>
-
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Link
               href="#contact"
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-linear-to-b from-[#0C6ACD] to-[#01267E] px-6 py-3.5 text-base font-semibold text-white shadow-[0_0_32px_rgba(34,211,238,0.35)] transition-[transform,box-shadow] hover:shadow-[0_0_40px_rgba(34,211,238,0.5)] active:scale-[0.99]"
             >
               <ShieldCheck className="size-5 shrink-0" aria-hidden />
-              Request Audit
+              Submit Contract for Audit
             </Link>
             <Link
               href="/sample-report"
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-cyan-400/50 bg-[#0a1220]/80 px-6 py-3.5 text-base font-semibold text-cyan-100 shadow-[0_0_20px_rgba(34,211,238,0.08)] backdrop-blur-sm transition-colors hover:border-cyan-300/70 hover:bg-cyan-500/10"
             >
               <FileText className="size-5 shrink-0 text-cyan-300" aria-hidden />
-              View Sample Report
+              Download Sample Audit Report
             </Link>
           </div>
 
           <div className="mt-10 grid grid-cols-1 divide-y divide-cyan-500/15 rounded-2xl border border-cyan-500/20 bg-white/4 p-4 backdrop-blur-md sm:grid-cols-3 sm:divide-x sm:divide-y-0 sm:p-0">
             <div className="flex items-center gap-3 px-4 py-3 sm:py-4">
               <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-300 shadow-[0_0_16px_rgba(16,185,129,0.3)]">
-                <ShieldCheck className="size-5" aria-hidden />
+                <Shield className="size-5" aria-hidden />
               </div>
-              <div>
-                <p className="text-xl font-bold tabular-nums text-white sm:text-2xl">
-                  100+
-                </p>
-                <p className="text-xs text-[#B8C7D9]">Audits Completed</p>
-              </div>
+              <p className="text-xs font-semibold leading-snug text-white sm:text-[15px]">
+                Multi-Layer Security Testing
+              </p>
             </div>
             <div className="flex items-center gap-3 px-4 py-3 sm:py-4">
               <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-300 shadow-[0_0_16px_rgba(34,211,238,0.25)]">
-                <Lock className="size-5" aria-hidden />
+                <Zap className="size-5" aria-hidden />
               </div>
-              <div>
-                <p className="text-xl font-bold tabular-nums text-white sm:text-2xl">
-                  $50M+
-                </p>
-                <p className="text-xs text-[#B8C7D9]">Market Cap Secured</p>
-              </div>
+              <p className="text-xs font-semibold leading-snug text-white sm:text-[15px]">
+                Fast &amp; Reliable Delivery
+              </p>
             </div>
             <div className="flex items-center gap-3 px-4 py-3 sm:py-4">
               <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-orange-500/15 text-orange-300 shadow-[0_0_16px_rgba(249,115,22,0.3)]">
-                <Bug className="size-5" aria-hidden />
+                <RefreshCcw className="size-5" aria-hidden />
               </div>
               <div>
-                <p className="text-xl font-bold tabular-nums text-white sm:text-2xl">
-                  500+
+                <p className="text-xs font-semibold leading-snug text-white sm:text-[15px]">
+                Free Re-Audit Included
                 </p>
-                <p className="text-xs text-[#B8C7D9]">Vulnerabilities Found</p>
               </div>
             </div>
           </div>

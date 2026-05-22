@@ -1,5 +1,5 @@
 /**
- * Primary blue gradient CTA (matches testimonials “Request Audit Now”).
+ * Primary blue gradient CTA (matches testimonials button label).
  */
 export const LANDING_PRIMARY_CTA_BUTTON =
   "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-b from-[#0C6ACD] to-[#01267E] px-4 py-3 text-sm font-semibold text-white shadow-[0_0_32px_rgba(34,211,238,0.35)] transition-[transform,box-shadow] hover:shadow-[0_0_40px_rgba(34,211,238,0.5)] active:scale-[0.99] sm:px-5 sm:text-base";

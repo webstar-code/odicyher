@@ -1,4 +1,4 @@
-import { Check, Eye } from "lucide-react";
+import { ClipboardCheck, Code2, Eye, FileSearch, RefreshCcw } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -8,12 +8,30 @@ const DASHBOARD_W = 1536;
 const DASHBOARD_H = 1024;
 
 const REPORT_FEATURES = [
-  "Security Score",
-  "Honeypot Detection",
-  "Liquidity Analysis",
-  "Anti-Whale Check",
-  "Holder Distribution",
-  "Ownership Analysis",
+  {
+    title: "Detailed Vulnerability Breakdown",
+    description:
+      "Every issue is clearly identified, classified, and explained with its potential impact.",
+    icon: FileSearch,
+  },
+  {
+    title: "Manual & Automated Review",
+    description:
+      "Our experts perform in-depth manual analysis along with advanced security tools.",
+    icon: Code2,
+  },
+  {
+    title: "Fix Recommendations",
+    description:
+      "We provide clear and actionable steps to resolve each identified issue.",
+    icon: ClipboardCheck,
+  },
+  {
+    title: "Re-Audit Verification",
+    description:
+      "We re-verify the contract after fixes to ensure all critical issues are properly addressed.",
+    icon: RefreshCcw,
+  },
 ] as const;
 
 export function TransparentAuditReports() {
@@ -43,7 +61,7 @@ export function TransparentAuditReports() {
           >
             <div className="max-md:transform-none md:transform-[rotateY(0deg)_rotateX(0deg)]">
               <div
-                className="pointer-events-none absolute -inset-3 -z-10 rounded-3xl opacity-70 blur-2xl"
+                className="pointer-events-none absolute -inset-3 -z-10 rounded-3xl blur-2xl"
                 style={{
                   background:
                     "radial-gradient(ellipse 70% 60% at 50% 45%, rgba(34,211,238,0.22), transparent 65%)",
@@ -55,7 +73,7 @@ export function TransparentAuditReports() {
                 alt="Sample audit report dashboard with score, findings, and audit details"
                 width={DASHBOARD_W}
                 height={DASHBOARD_H}
-                className="h-auto w-full rounded-2xl border border-cyan-400/30 object-contain shadow-[0_0_48px_rgba(34,211,238,0.15),0_24px_48px_rgba(0,0,0,0.35)]"
+                className="h-auto w-full rounded-2xl object-contain shadow-[0_0_48px_rgba(34,211,238,0.15),0_24px_48px_rgba(0,0,0,0.35)]"
                 sizes="(max-width: 1024px) min(100vw - 2rem, 640px), 45vw"
               />
             </div>
@@ -74,21 +92,21 @@ export function TransparentAuditReports() {
             exactly what&apos;s secure and what needs to be fixed.
           </p>
 
-          <ul className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-3.5">
-            {REPORT_FEATURES.map((label) => (
-              <li key={label} className="flex items-center gap-3">
+          <ul className="mt-8 space-y-5">
+            {REPORT_FEATURES.map((feature) => (
+              <li key={feature.title} className="flex items-start gap-3.5">
                 <span
-                  className="flex size-7 shrink-0 items-center justify-center rounded-full bg-emerald-600 shadow-[0_0_12px_rgba(16,185,129,0.3)] ring-1 ring-emerald-300/35"
+                  className="mt-0.5 flex size-12 shrink-0 items-center justify-center rounded-full border border-cyan-400/35 bg-cyan-500/10 shadow-[0_0_20px_rgba(34,211,238,0.16)]"
                   aria-hidden
                 >
-                  <Check
-                    className="size-3.5 text-white"
-                    strokeWidth={3}
-                  />
+                  <feature.icon className="size-5 text-cyan-100" strokeWidth={2.25} />
                 </span>
-                <span className="text-sm font-medium text-[#B8C7D9] sm:text-[15px]">
-                  {label}
-                </span>
+                <div>
+                  <h3 className="text-xl font-semibold text-white">{feature.title}</h3>
+                  <p className="mt-1 text-sm leading-relaxed text-[#B8C7D9] sm:text-base">
+                    {feature.description}
+                  </p>
+                </div>
               </li>
             ))}
           </ul>
@@ -98,7 +116,7 @@ export function TransparentAuditReports() {
             className="mt-10 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-cyan-400/45 bg-linear-to-b from-[#0C6ACD] to-[#01267E] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_0_28px_rgba(34,211,238,0.12)] transition-[border-color,box-shadow,background-color] hover:border-cyan-300/60 hover:bg-[#061a2c] hover:shadow-[0_0_36px_rgba(34,211,238,0.2)] sm:w-auto sm:text-base"
           >
             <Eye className="size-5 shrink-0 text-cyan-200" aria-hidden />
-            View Full Report
+            View Full Report (PDF)
           </Link>
         </div>
       </div>

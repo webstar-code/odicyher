@@ -73,7 +73,7 @@ export function SiteHeader() {
             href="#contact"
             className="whitespace-nowrap rounded-sm bg-linear-to-b from-[#0C6ACD] to-[#01267E] px-2.5 py-2 text-xs font-semibold text-white shadow-[0_0_24px_rgba(34,211,238,0.35)] transition-[transform,box-shadow] hover:shadow-[0_0_32px_rgba(34,211,238,0.5)] active:scale-[0.98] sm:px-5 sm:py-2.5 sm:text-sm"
           >
-            Request Audit
+            Submit Contract for Audit
           </Link>
         </div>
       </div>
