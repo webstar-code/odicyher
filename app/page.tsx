@@ -3,7 +3,6 @@ import { AdvancedSecurityFeatures } from "@/components/landing/advanced-security
 import { AuditProcess } from "@/components/landing/audit-process";
 import { TransparentAuditReports } from "@/components/landing/transparent-audit-reports";
 import { LandingHero } from "@/components/landing/landing-hero";
-import { MeetOurTeam } from "@/components/landing/meet-our-team";
 import { PricingPlans } from "@/components/landing/pricing-plans";
 import { LatestAuditReports } from "@/components/landing/latest-audit-reports";
 import { SupportedNetworks } from "@/components/landing/supported-networks";
@@ -31,7 +30,6 @@ export default function Home() {
         <SupportedNetworks />
         <LatestAuditReports />
         <WhyChooseUs />
-        <MeetOurTeam />
         <AdvancedSecurityCoverage />
         <AdvancedSecurityFeatures />
         <PricingPlans />
